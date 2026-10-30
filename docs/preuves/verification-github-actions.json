@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-30",
+  "url": "https://github.com/hamza-ouchen/obdagentauto/actions/runs/41075971423",
+  "conclusion": "success",
+  "commit": "6ef57ea393f07bd2676bb27c3f33a957e136d75a",
+  "jobs": [
+    {
+      "name": "tests",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run pip install -r requirements.lock.txt",
+          "conclusion": "success"
+        },
+        {
+          "name": "Suite de tests sans appel fournisseur",
+          "conclusion": "success"
+        },
+        {
+          "name": "Construction Docker",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verification du conteneur",
+          "conclusion": "success"
+        },
+        {
+          "name": "Logs du conteneur",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

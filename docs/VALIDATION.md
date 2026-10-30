@@ -22,13 +22,13 @@ Date : 30 octobre 2026. Les statuts ci-dessous distinguent les vérifications lo
 - `docs/DEMONSTRATION.webm` : vidéo locale avec explications à l’écran, sans audio.
 - `docs/agent-cards.json` et `docs/RUNBOOK.md` : gouvernance et procédure d’incident.
 
-## Préparé, mais pas déclaré validé à distance
+## Vérifié sur GitHub et Render
 
-- GitHub Actions : workflow fourni et suite exécutée localement ; aucune exécution distante ne peut être annoncée réussie tant que le dépôt n’a pas été publié et le job vérifié.
-- Render Free : Dockerfile, Blueprint, variables et healthcheck fournis. L’URL publique doit encore être obtenue et son parcours vérifié.
-- Les connexions indiquées par l’utilisateur ne sont pas exposées aux outils de cette session. Aucun jeton GitHub/Render local utilisable n’a été trouvé. La clé OpenRouter n’autorise pas ces publications.
-
-Le projet ne doit donc pas être présenté comme satisfaisant déjà la totalité des critères du professeur : les preuves GitHub Actions et Render restent à produire.
+- Dépôt publié : https://github.com/hamza-ouchen/obdagentauto.
+- GitHub Actions : [exécution réussie](https://github.com/hamza-ouchen/obdagentauto/actions/runs/41075971423), suite Python, construction Docker et vérification du conteneur. Preuve : `docs/preuves/verification-github-actions.json`.
+- Application publique : https://obdagentauto.onrender.com, service Docker au plan Free, région Francfort. `/`, `/api/health` et `/api/bootstrap` répondent 200 ; version 2.1.0.
+- Parcours Chrome réalisé sur Render avec OpenRouter : questionnaire, estimation bougies à 480 DH, autre réponse donnant bobine à 950 DH, incertitude conservant 480–1250 DH, coordonnées obligatoires, réservation et rechargement du dossier. Vue mobile sans débordement ; aucune erreur JavaScript. Preuve : `docs/preuves/verification-render.json`.
+- Le déploiement du commit `6ef57ea` est confirmé actif après la réussite CI. Ces preuves portent sur cette version du code ; la présente mise à jour ne modifie que la documentation.
 
 ## Limites explicites
 

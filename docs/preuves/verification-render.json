@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "runId": "c635de0448544a74bca1d276a492f94a",
+  "coilId": "5650009c33a44128b8a4438873aeae3d",
+  "uncertainId": "8dca31d631954d63a02acaf4900125f5",
+  "providers": {
+    "interpretation": "openrouter",
+    "recherche": "openrouter"
+  },
+  "selected_plugs": 480,
+  "selected_coil": 950,
+  "uncertain_range": [
+    480,
+    1250
+  ],
+  "customer_required": true,
+  "customer_retained_after_reload": true,
+  "mobile_no_overflow": true,
+  "jsErrors": [],
+  "date": "2026-10-30",
+  "url": "https://obdagentauto.onrender.com",
+  "service_id": "srv-dbiapb2jnfac73d9stp0",
+  "plan": "free",
+  "region": "frankfurt",
+  "verified_deployment": "dep-dbib074s728c73aa8meg",
+  "deployed_commit": "6ef57ea393f07bd2676bb27c3f33a957e136d75a",
+  "health_status": 200,
+  "note": "Parcours Chrome complet sur le premier deploiement ; healthcheck confirme sur le commit CI. Les dossiers SQLite sont ephemeres."
+}

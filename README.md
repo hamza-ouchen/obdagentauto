@@ -4,6 +4,8 @@
 
 Diagnostic automobile pédagogique avec **LangGraph**, **OpenAI via OpenRouter**, **SQLite / OBDb**, interface futuriste sombre et monitoring des agents. Un seul serveur Python, un seul conteneur, un service **Render Free**.
 
+Application en ligne : **https://obdagentauto.onrender.com**. [Tests GitHub Actions réussis](https://github.com/hamza-ouchen/obdagentauto/actions/runs/41075971423).
+
 ## Lancer
 
 Les dépendances et la clé fournie sont déjà configurées dans cet espace. Depuis ce dossier :
@@ -97,7 +99,7 @@ Les fiches, règles de classement, prix et atelier sont pédagogiques. Le véhic
 
 Les tests utilisent une base temporaire et des appels fournisseur simulés : aucun coût API pendant la suite automatique. Ils couvrent les branches, les trois pauses, l’influence des réponses sur la cause et le prix, l’incertitude, les coordonnées obligatoires, les refus, les conflits simultanés, l’idempotence, la reprise SQLite, les coûts, le monitoring et les sources OBDb.
 
-Un test réel du modèle et des vérifications Chrome sont consignés séparément dans [le rapport de livraison](docs/VALIDATION.md). Les résultats locaux ne constituent pas une exécution GitHub Actions ou un déploiement cloud.
+Un test réel du modèle et des vérifications Chrome sont consignés séparément dans [le rapport de livraison](docs/VALIDATION.md). La suite GitHub Actions et le parcours sur Render ont également été vérifiés ; leurs preuves figurent dans le rapport.
 
 ## Docker
 
@@ -133,4 +135,4 @@ Le conteneur écoute sur `0.0.0.0` et le `PORT` fourni par Render. Le frontend u
 - Rapport JSON téléchargeable par diagnostic : State, métriques, événements et incidents.
 - [Illustration, prompt de génération et licences](docs/ASSETS.md).
 
-La connexion aux comptes GitHub/Render est nécessaire pour publier en leur nom. Une clé OpenRouter ne donne pas accès à ces plateformes. Tant qu’aucune URL publique et exécution GitHub Actions ne sont vérifiées, ces deux critères restent à finaliser.
+Le dépôt GitHub et le service Render Free sont publiés. Les preuves du workflow et du parcours cloud sont incluses dans `docs/preuves/verification-github-actions.json` et `docs/preuves/verification-render.json`.
