@@ -1,5 +1,7 @@
 # AutoDiag AI
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/hamza-ouchen/obdagentauto)
+
 Diagnostic automobile pédagogique avec **LangGraph**, **OpenAI via OpenRouter**, **SQLite / OBDb**, interface futuriste sombre et monitoring des agents. Un seul serveur Python, un seul conteneur, un service **Render Free**.
 
 ## Lancer
