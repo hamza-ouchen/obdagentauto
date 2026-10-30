@@ -1,0 +1,55 @@
+sequenceDiagram
+    autonumber
+    actor U as Utilisateur
+    participant UI as Interface diagnostic
+    participant API as FastAPI
+    participant G as LangGraph
+    participant I as Agent interprétation
+    participant R as Agent recherche
+    participant E as Agent estimation
+    participant M as Monitoring
+    participant DB as SQLite
+    participant LLM as OpenAI
+    U->>UI: Saisir P0301 et sélectionner le véhicule
+    U->>UI: Cliquer Analyser le code
+    UI->>UI: Contrôler la forme des champs
+    UI->>API: POST /api/diagnostics
+    API->>API: Valider et créer le Correlation ID
+    API->>DB: Enregistrer le dossier queued
+    API-->>UI: 202 avec id, statut et URL de suivi
+    API->>G: Lancer la tâche avec thread_id = id
+    G->>I: State initial
+    I->>M: agent.started
+    I->>DB: Chercher la définition de P0301
+    DB-->>I: Définition et référence de fiche
+    I->>LLM: Reformuler cette définition et le contexte
+    LLM-->>I: Explication et usage tokens
+    I->>M: agent.completed, durée, usage et coût estimé
+    I-->>G: Mettre à jour interpretation et known_code
+    G->>DB: Sauvegarder le State
+    G->>R: Code connu, véhicule et interprétation
+    R->>M: agent.started
+    R->>DB: Lire causes, contrôles et signaux véhicule applicables
+    DB-->>R: Fiches et provenance
+    R->>LLM: Synthétiser seulement les informations fournies
+    LLM-->>R: Synthèse et usage tokens
+    R->>M: agent.completed
+    R-->>G: Mettre à jour causes et références
+    G->>E: Causes et catalogue tarifaire
+    E->>M: agent.started
+    E->>DB: Lire prix et durées de l’hypothèse principale
+    DB-->>E: Pièces 180 DH, 1,5 h, tarif 200 DH/h
+    E->>E: Calculer 180 + 1,5 × 200 = 480 DH
+    E->>M: agent.completed, zéro token LLM
+    E-->>G: Mettre à jour estimate
+    G->>G: interrupt au contrôle du devis
+    G->>DB: Enregistrer checkpoint et statut awaiting_quote_approval
+    G->>M: human.wait.started
+    loop Toutes les 2 secondes tant que le calcul est actif
+        UI->>API: GET /api/diagnostics/{id}?after_event=...
+        API->>DB: Lire résultats et événements déjà produits
+        API-->>UI: Statut, State affichable et nouveaux événements
+        UI-->>U: Mettre à jour les cartes et le graphe
+    end
+    UI-->>U: Afficher le devis et les deux choix
+    Note over UI,G: La lecture s’arrête à la pause humaine. Aucune requête HTTP ne reste ouverte pendant cette attente.

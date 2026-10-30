@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor D as Développeur
+    participant GH as GitHub
+    participant CI as GitHub Actions
+    participant R as Render Free
+    participant APP as Conteneur de l’application
+    D->>GH: Pousser le code et la documentation
+    GH->>CI: Déclencher la suite automatisée
+    CI->>CI: Installer dépendances et exécuter tests sans vraie clé
+    CI->>CI: Construire Docker et vérifier le démarrage HTTP
+    alt Au moins un contrôle échoue
+        CI-->>GH: Échec et détails
+        Note over GH,R: Aucun nouveau déploiement automatique de cette révision
+    else Contrôles réussis
+        CI-->>GH: Succès et artefacts de tests
+        GH-->>R: Révision admissible au déploiement
+        R->>R: Construire le Dockerfile
+        R->>APP: Démarrer avec PORT et variables serveur
+        APP->>APP: Initialiser SQLite et les données embarquées si nécessaire
+        R->>APP: GET /api/health
+        APP-->>R: 200 si l’application est prête
+        R-->>D: URL publique de l’application
+    end

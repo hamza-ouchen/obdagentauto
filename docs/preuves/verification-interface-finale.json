@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "immutable_dossier": true,
+  "empty_new_form": true,
+  "period_filters": true,
+  "video": {
+    "duration_seconds": 57.56,
+    "width": 1512,
+    "height": 980
+  },
+  "javascript_errors": [],
+  "source": "Chrome verification executed on 2026-10-30"
+}

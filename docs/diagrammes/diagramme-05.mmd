@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    actor U as Utilisateur
+    participant UI as Interface diagnostic
+    participant API as FastAPI
+    participant G as LangGraph
+    participant A as Agent rendez-vous
+    participant M as Monitoring
+    participant DB as SQLite
+    U->>UI: Cliquer Accepter le devis
+    UI->>API: POST /api/diagnostics/{id}/quote-decision avec accepted=true
+    API->>DB: Vérifier statut et absence de reprise en cours
+    API->>DB: Enregistrer l’événement de décision
+    API-->>UI: 202, reprise en cours
+    API->>G: Command resume avec la décision
+    G->>M: human.wait.ended et devis accepté
+    G->>A: Même State, même Correlation ID
+    A->>M: agent.started
+    A->>DB: Consulter horaires et réservations actuelles
+    DB-->>A: Créneaux candidats libres
+    A-->>G: Enregistrer les options
+    A->>M: agent.completed
+    G->>G: interrupt au contrôle de réservation
+    G->>DB: Checkpoint awaiting_booking_approval
+    UI->>API: GET /api/diagnostics/{id}
+    API-->>UI: Créneaux, devis accepté et pause humaine
+    UI-->>U: Afficher les créneaux et le récapitulatif
+    U->>UI: Sélectionner un créneau
+    U->>UI: Cocher la confirmation
+    Note over UI,DB: Ces deux actions locales ne réservent rien
+    U->>UI: Cliquer Confirmer le rendez-vous
+    UI->>API: POST /api/diagnostics/{id}/booking-decision
+    API->>DB: Vérifier statut, accord et disponibilité du créneau
+    alt Créneau déjà occupé ou passé
+        API-->>UI: 409, aucune reprise, aucune réservation
+        UI->>API: GET /api/diagnostics/{id}/slots
+        API-->>UI: Options encore disponibles
+        UI-->>U: Demander un autre choix et une nouvelle confirmation
+    else Créneau recevable
+        API-->>UI: 202, confirmation en cours
+        API->>G: Command resume avec la confirmation explicite
+        G->>DB: Transaction : revérifier puis insérer la réservation
+        DB-->>G: Référence unique
+        G->>DB: Sauvegarder appointment et statut booked
+        G->>M: booking.confirmed et run.completed
+        G->>G: END
+        UI->>API: GET /api/diagnostics/{id}
+        API-->>UI: Réservation confirmée
+        UI-->>U: Afficher la confirmation verte
+    end

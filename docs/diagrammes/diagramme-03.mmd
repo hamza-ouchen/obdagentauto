@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    actor U as Utilisateur
+    participant B as Navigateur
+    participant R as Render Free
+    participant API as FastAPI
+    participant DB as SQLite
+    U->>B: Ouvrir l’URL publique
+    B->>R: GET /
+    opt Service endormi
+        R->>R: Réveiller le conteneur
+        Note over B,R: Le premier affichage peut être retardé
+    end
+    R->>API: Transmettre la requête
+    opt Base absente au démarrage
+        API->>DB: Créer les tables et importer les fichiers embarqués
+    end
+    API-->>B: HTML et fichiers CSS/JS/images
+    par Configuration et catalogue
+        B->>API: GET /api/bootstrap
+        API->>DB: Lire codes, véhicules et disponibilité des données
+        API-->>B: Catalogue, mode IA, version et limites du TP
+    and Indicateurs du dashboard
+        B->>API: GET /api/monitoring/summary
+        API->>DB: Agréger les événements de la base courante
+        API-->>B: KPI réels ou valeurs vides
+    end
+    B-->>U: Afficher le dashboard futuriste
+    Note over B,API: Aucun appel OpenAI à l’ouverture
+    U->>B: Cliquer Nouveau diagnostic
+    B-->>U: Afficher le formulaire

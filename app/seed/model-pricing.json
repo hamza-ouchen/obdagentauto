@@ -1,0 +1,10 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "pricing": {
+    "prompt": "0.00000015",
+    "completion": "0.0000006",
+    "input_cache_read": "0.000000075"
+  },
+  "verified": "2026-10-30",
+  "source": "https://openrouter.ai/api/v1/models"
+}

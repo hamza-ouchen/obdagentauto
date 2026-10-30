@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor U as Utilisateur
+    participant UI as Interface
+    participant API as FastAPI
+    participant G as LangGraph
+    participant DB as SQLite
+    participant M as Monitoring
+    alt Format invalide
+        U->>UI: Saisir un code mal formé
+        UI-->>U: Erreur sous le champ, envoi bloqué
+        Note over UI,API: L’API applique aussi sa propre validation si elle est appelée directement
+    else Format valide mais code absent des fiches
+        UI->>API: POST diagnostic, par exemple P0999
+        API-->>UI: 202 et identifiant
+        API->>G: Démarrer l’interprétation
+        G->>DB: Chercher le code
+        DB-->>G: Aucune fiche
+        G->>M: Événement code.unknown
+        G->>G: Edge conditionnel vers END
+        UI->>API: Lire le dossier
+        API-->>UI: unknown_code, sans causes ni devis
+        UI-->>U: Code non couvert, proposer les codes disponibles
+    else Devis connu mais refusé
+        U->>UI: Confirmer Refuser le devis
+        UI->>API: POST quote-decision, accepted=false
+        API->>G: Reprendre la pause du devis
+        G->>M: price.declined
+        G->>G: Edge conditionnel vers END
+        UI->>API: Lire le dossier
+        API-->>UI: price_declined
+        UI-->>U: Devis refusé, aucune réservation
+        Note over G,DB: L’agent rendez-vous n’est pas appelé
+    end

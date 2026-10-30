@@ -1,0 +1,26 @@
+flowchart TB
+    User[Utilisateur / professeur] --> Browser[Interface futuriste dans le navigateur]
+    Browser -->|HTTP JSON : même domaine| API[FastAPI]
+    subgraph Docker[Un conteneur Docker sur Render Free]
+        API --> Worker[Tâches courtes dans le processus FastAPI]
+        Worker --> Graph[LangGraph : State partagé]
+        Graph --> I[Agent 1 : interprétation]
+        Graph --> R[Agent 2 : recherche]
+        Graph --> E[Agent 3 : estimation]
+        Graph --> A[Agent 4 : rendez-vous]
+        Graph --> H[Deux validations humaines]
+        I --> Monitor[Agent de monitoring transversal]
+        R --> Monitor
+        E --> Monitor
+        A --> Monitor
+        H --> Monitor
+        API --> DB[(SQLite)]
+        Graph --> DB
+        Monitor --> DB
+        Seed[Fiches TP + sélection JSON OBDb] --> DB
+        Monitor --> Logs[Logs JSON sur stdout]
+    end
+    I -->|Reformulation| OpenAI[API OpenAI]
+    R -->|Synthèse fondée sur les fiches| OpenAI
+    API -->|État, événements et métriques| Browser
+    GitHub[GitHub Actions : tests + contrôle Docker] -->|Déploiement après CI réussie| Docker

@@ -1,0 +1,20 @@
+flowchart TD
+    S([START]) --> I[Agent 1 : interprétation]
+    I --> K{Code dans la base ?}
+    K -->|Non : unknown_code| Z([END sans réservation])
+    K -->|Oui| R[Agent 2 : recherche]
+    R --> E[Agent 3 : estimation]
+    E --> Q[Contrôle humain : accepter ou refuser le devis]
+    Q -.->|interrupt : attente sans calcul| Q
+    Q --> P{Devis accepté ?}
+    P -->|Non : price_declined| Z
+    P -->|Oui| A[Agent 4 : rendez-vous — proposer]
+    A --> D{Créneaux disponibles ?}
+    D -->|Non : no_slots| Z
+    D -->|Oui| B[Contrôle humain : choix et confirmation]
+    B -.->|interrupt : attente sans réservation| B
+    B --> C{Confirmation explicite ?}
+    C -->|Non : booking_declined| Z
+    C -->|Oui| T[Outil de réservation : vérifier et insérer]
+    T -->|Succès : booked| F([END])
+    T -.->|Conflit : rester en attente de choix| B

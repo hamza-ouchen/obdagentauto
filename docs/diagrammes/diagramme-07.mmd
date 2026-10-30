@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor P as Professeur / démonstrateur
+    participant UI as Centre des agents
+    participant API as FastAPI
+    participant G as Agent métier dans LangGraph
+    participant LLM as OpenAI ou simulateur borné à ce dossier
+    participant M as Monitoring
+    participant DB as SQLite
+    P->>UI: Cliquer Simuler indisponibilité OpenAI
+    UI->>API: POST diagnostic avec scénario openai_unavailable
+    API-->>UI: Identifiant, origine scénario incident
+    API->>G: Lancer P0301 avec le scénario
+    G->>LLM: Demander la reformulation
+    LLM-->>G: Erreur simulée explicitement identifiée
+    G->>M: provider.error avec Correlation ID
+    M->>DB: Ouvrir l’incident et associer le runbook
+    G->>DB: Lire la fiche locale de secours
+    DB-->>G: Explication et causes fictives déjà connues
+    G->>M: fallback.applied et degraded=true
+    M->>DB: Tracer l’étape de mitigation du runbook
+    G->>G: Continuer jusqu’au devis
+    UI->>API: Lire dossier, événements et incident
+    API-->>UI: Résultats, avertissement, incident mitigé
+    UI-->>P: Afficher le secours et les preuves
+    P->>UI: Exporter le compte rendu d’incident

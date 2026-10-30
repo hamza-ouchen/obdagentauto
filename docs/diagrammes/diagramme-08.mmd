@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor U as Utilisateur
+    participant UI as Centre des agents
+    participant API as FastAPI
+    participant DB as SQLite
+    U->>UI: Ouvrir Centre des agents
+    UI->>API: GET /api/monitoring/summary avec filtres
+    API->>DB: Agréger les événements enregistrés
+    DB-->>API: Durées, usage, coûts et erreurs
+    API-->>UI: KPI et séries de graphiques
+    U->>UI: Sélectionner un Correlation ID
+    UI->>API: GET /api/diagnostics/{id}/events
+    API-->>UI: Chronologie des nœuds, pauses et incidents
+    UI-->>U: Graphe et trace détaillée
+    opt Dossier en calcul et vue non mise en pause
+        loop Toutes les 2 secondes
+            UI->>API: GET événements après le dernier identifiant
+            API-->>UI: Nouveaux événements uniquement
+            UI-->>U: Mettre à jour les moniteurs
+        end
+    end
+    U->>UI: Cliquer Exporter les traces
+    UI->>API: GET /api/diagnostics/{id}/export
+    API-->>UI: JSON du rapport et des événements
+    UI-->>U: Téléchargement

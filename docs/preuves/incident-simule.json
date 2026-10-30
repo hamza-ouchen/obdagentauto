@@ -1,0 +1,231 @@
+{
+  "id": "163da8d7c9244b88a0af1e7f9e60ef25",
+  "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+  "code": "P0301",
+  "vehicle_id": null,
+  "vehicle": "Véhicule non précisé",
+  "year": null,
+  "scenario": "openai_unavailable",
+  "status": "price_declined",
+  "created_at": "2026-10-30T11:00:14.579547+00:00",
+  "updated_at": "2026-10-30T11:00:20.564584+00:00",
+  "providers": {
+    "interpretation": "fallback",
+    "recherche": "fallback"
+  },
+  "degraded": true,
+  "appointment": null,
+  "processing_ms": 428,
+  "current_agent": null,
+  "known_code": true,
+  "title": "Ratés d’allumage · cylindre 1",
+  "system": "Allumage",
+  "interpretation": "Le cylindre n° 1 ne brûle pas correctement le mélange air-carburant. Cela peut provoquer des vibrations, une perte de puissance et une consommation plus élevée.",
+  "causes": [
+    {
+      "name": "Bougie d’allumage usée",
+      "detail": "Contrôler l’état et l’écartement de la bougie du cylindre 1.",
+      "likelihood": "Élevée",
+      "parts": 180,
+      "source": "Fiche pédagogique SQLite · P0301"
+    },
+    {
+      "name": "Bobine d’allumage défectueuse",
+      "detail": "Permuter la bobine avec un autre cylindre et vérifier si le défaut se déplace.",
+      "likelihood": "Moyenne",
+      "parts": 650,
+      "source": "Fiche pédagogique SQLite · P0301"
+    },
+    {
+      "name": "Injecteur encrassé",
+      "detail": "Vérifier le débit de l’injecteur et son alimentation électrique.",
+      "likelihood": "Faible",
+      "parts": 950,
+      "source": "Fiche pédagogique SQLite · P0301"
+    }
+  ],
+  "research_summary": "Contrôler d’abord la première hypothèse, puis les causes alternatives. Ces pistes nécessitent une vérification en atelier.",
+  "vehicle_signals": [],
+  "estimate": {
+    "parts": 180,
+    "hours": 1.5,
+    "hourly_rate": 200,
+    "labor": 300,
+    "total": 480,
+    "currency": "DH",
+    "repair": "Bougie d’allumage usée",
+    "note": "Prix fictifs du TP. Une seule hypothèse chiffrée, à confirmer après contrôle. Les causes ne sont pas cumulées."
+  },
+  "price_decision": "declined",
+  "events": [
+    {
+      "id": 97,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "monitoring",
+      "kind": "run.started",
+      "timestamp": "2026-10-30T11:00:14.594078+00:00"
+    },
+    {
+      "id": 98,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "interpretation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T11:00:14.689178+00:00"
+    },
+    {
+      "id": 99,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "interpretation",
+      "kind": "provider.error",
+      "timestamp": "2026-10-30T11:00:14.709320+00:00",
+      "error_category": "ConnectionError",
+      "simulated": true
+    },
+    {
+      "id": 100,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "interpretation",
+      "kind": "fallback.applied",
+      "timestamp": "2026-10-30T11:00:14.834245+00:00",
+      "incident_id": "d9feb6419f2d4c56bb57c3b89f1145b4"
+    },
+    {
+      "id": 101,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "interpretation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T11:00:14.838775+00:00",
+      "duration_ms": 189,
+      "provider": "fallback",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0,
+      "model": "openai/gpt-4o-mini"
+    },
+    {
+      "id": 102,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "recherche",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T11:00:14.863088+00:00"
+    },
+    {
+      "id": 103,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "recherche",
+      "kind": "provider.error",
+      "timestamp": "2026-10-30T11:00:14.864188+00:00",
+      "error_category": "ConnectionError",
+      "simulated": true
+    },
+    {
+      "id": 104,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "recherche",
+      "kind": "fallback.applied",
+      "timestamp": "2026-10-30T11:00:14.881370+00:00",
+      "incident_id": "f9f9f6d3bef24b74a0fe43faecf10b7e"
+    },
+    {
+      "id": 105,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "recherche",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T11:00:14.884132+00:00",
+      "duration_ms": 24,
+      "provider": "fallback",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0,
+      "model": "openai/gpt-4o-mini"
+    },
+    {
+      "id": 106,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "estimation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T11:00:14.917384+00:00"
+    },
+    {
+      "id": 107,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "estimation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T11:00:14.924132+00:00",
+      "duration_ms": 24,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "id": 108,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "monitoring",
+      "kind": "human.wait.started",
+      "timestamp": "2026-10-30T11:00:14.958922+00:00",
+      "wait_kind": "quote_approval"
+    },
+    {
+      "id": 109,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "monitoring",
+      "kind": "human.wait.ended",
+      "timestamp": "2026-10-30T11:00:20.504035+00:00"
+    },
+    {
+      "id": 110,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "monitoring",
+      "kind": "price.declined",
+      "timestamp": "2026-10-30T11:00:20.523804+00:00"
+    },
+    {
+      "id": 111,
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "monitoring",
+      "kind": "run.completed",
+      "timestamp": "2026-10-30T11:00:20.558875+00:00",
+      "outcome": "price_declined"
+    }
+  ],
+  "metrics": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0,
+    "incomplete_usage": false
+  },
+  "incidents": [
+    {
+      "id": "f9f9f6d3bef24b74a0fe43faecf10b7e",
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "recherche",
+      "category": "ConnectionError",
+      "simulated": true,
+      "status": "mitigated",
+      "runbook": "RB-LLM-01",
+      "created_at": "2026-10-30T11:00:14.868724+00:00",
+      "actions": [
+        "Erreur fournisseur détectée",
+        "Fiche SQLite disponible vérifiée",
+        "Repli local appliqué",
+        "Parcours poursuivi sans réservation automatique"
+      ]
+    },
+    {
+      "id": "d9feb6419f2d4c56bb57c3b89f1145b4",
+      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "agent": "interpretation",
+      "category": "ConnectionError",
+      "simulated": true,
+      "status": "mitigated",
+      "runbook": "RB-LLM-01",
+      "created_at": "2026-10-30T11:00:14.823882+00:00",
+      "actions": [
+        "Erreur fournisseur détectée",
+        "Fiche SQLite disponible vérifiée",
+        "Repli local appliqué",
+        "Parcours poursuivi sans réservation automatique"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: autodiag-ai
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: LLM_PROVIDER
+        value: openrouter
+      - key: LLM_MODEL
+        value: openai/gpt-4o-mini
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: GITHUB_REPOSITORY_URL
+        sync: false

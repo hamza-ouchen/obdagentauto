@@ -1,0 +1,12 @@
+.git
+.venv
+.qa
+node_modules
+.env
+.env.*
+runtime
+artifacts
+__pycache__
+*.pyc
+tests
+*.log

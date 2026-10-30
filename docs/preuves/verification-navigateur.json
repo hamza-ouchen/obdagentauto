@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "runId": "a86f72b6aecc49958568f46f4f15030c",
+  "providers": {
+    "interpretation": "openrouter",
+    "recherche": "openrouter"
+  },
+  "degraded": false,
+  "jsErrors": [],
+  "checks": [
+    "two approvals",
+    "booking",
+    "ICS download",
+    "history",
+    "refresh",
+    "monitoring",
+    "presentation isolation",
+    "incident",
+    "refusal",
+    "unknown code",
+    "five cards",
+    "six mobile views"
+  ]
+}
