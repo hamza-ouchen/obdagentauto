@@ -2,6 +2,10 @@
 
 Document de conception du 30 octobre 2026, conservé comme référence du parcours validé. La mise en œuvre 2.0 est décrite dans le README et son état vérifié dans docs/VALIDATION.md ; ce document seul ne constitue pas une preuve de livraison cloud.
 
+### Évolution 2.1 — symptômes et coordonnées
+
+Le nouveau parcours comporte un questionnaire avant tout devis, puis une analyse des réponses. Une hypothèse étayée permet un budget indicatif ; sinon, plusieurs scénarios et une fourchette sont conservés. Prénom, nom, téléphone et email sont obligatoires à la confirmation du rendez-vous. Les règles et le contrat API sont détaillés dans [EVOLUTION_2_1.md](EVOLUTION_2_1.md), qui remplace le choix de la première cause du prototype.
+
 ### Ajustements de mise en œuvre confirmés
 
 - Le fournisseur est désormais **OpenRouter avec le modèle OpenAI openai/gpt-4o-mini**, selon le choix de l’utilisateur. La clé OpenRouter reste côté serveur.
@@ -12,14 +16,14 @@ Document de conception du 30 octobre 2026, conservé comme référence du parcou
 
 ## 1. Objectif et décisions de base
 
-L’utilisateur saisit un code OBD-II et éventuellement un véhicule. L’application explique le code, recherche des causes dans une base technique, calcule une estimation en DH, attend l’acceptation du devis, propose des créneaux puis attend la confirmation avant d’enregistrer une réservation fictive. Un agent de monitoring observe ce parcours et alimente une interface de supervision.
+L’utilisateur saisit un code OBD-II et éventuellement un véhicule. L’application explique le code, recherche des causes dans une base technique, recueille les observations du client, classe les hypothèses puis calcule un budget ou une fourchette en DH. Après l’accord sur ce budget, elle propose des créneaux et attend les coordonnées et la confirmation avant d’enregistrer une réservation fictive. Un agent de monitoring observe le parcours et alimente la supervision.
 
 Le professeur doit pouvoir constater : architecture multi-agents, Correlation ID, tests GitHub Actions réussis, Agent Cards, Docker, API cloud accessible, incident traité avec runbook, documentation et vidéo.
 
 | Sujet | Décision proposée |
 | --- | --- |
 | Application | Un seul projet Python, un seul serveur FastAPI, un seul processus. |
-| Orchestration | Un StateGraph LangGraph avec quatre agents métier et deux étapes de validation humaine. |
+| Orchestration | Un StateGraph LangGraph avec quatre rôles métier, une pause questionnaire et deux validations humaines. |
 | Agent supplémentaire | Monitoring transversal à règles simples, exécuté dans le même processus. |
 | Fournisseur IA | OpenAI pour l’interprétation et la synthèse des causes ; calcul et réservation par fonctions déterministes. |
 | Stockage | SQLite local au conteneur, initialisé à partir de fichiers inclus dans le projet. |
@@ -28,7 +32,7 @@ Le professeur doit pouvoir constater : architecture multi-agents, Correlation ID
 | Progression | Une requête de lancement, puis de courtes lectures périodiques du statut. Pas de service de messages supplémentaire. |
 | Validation humaine | Deux pauses réelles du graphe, avec interrupt() et reprise du même thread. |
 | Authenticité | Les mesures des agents viennent des exécutions ; les signaux automobiles animés sont simulés et identifiés. |
-| Usage du TP | Données et réservations de démonstration ; aucun nom, téléphone, paiement ou contact atelier réel. |
+| Usage du TP | Données et réservations de démonstration ; coordonnées du client à la réservation, aucun paiement ni contact atelier réel. |
 | Persistance cloud | Aucune garantie après redémarrage/endormissement de Render Free ; export des preuves et rapports. |
 
 Décision confirmée par l’utilisateur : les agents métier déterministes sont acceptés pour le calcul et la réservation. OpenAI est réservé aux tâches de langage. Les Agent Cards décrivent explicitement cette distinction.
@@ -314,6 +318,7 @@ Les événements et les agrégats de monitoring sont stockés à part pour ne pa
 
 | Statut API | Libellé UI | Actions possibles |
 | --- | --- | --- |
+| awaiting_symptom_answers | Observations nécessaires | Répondre aux questions, y compris Je ne sais pas. |
 | queued | Analyse en préparation | Consulter ou quitter la page. |
 | running | Analyse en cours | Consulter la progression ; aucune réservation possible. |
 | awaiting_quote_approval | Devis à valider | Accepter ou refuser le devis. |
@@ -335,7 +340,10 @@ flowchart TD
     I --> K{Code dans la base ?}
     K -->|Non : unknown_code| Z([END sans réservation])
     K -->|Oui| R[Agent 2 : recherche]
-    R --> E[Agent 3 : estimation]
+    R --> QS[Questionnaire client : trois observations]
+    QS -.->|interrupt : attente des réponses| QS
+    QS --> AN[Agent 2 : analyser les réponses et classer les hypothèses]
+    AN --> E[Agent 3 : budget ou fourchette]
     E --> Q[Contrôle humain : accepter ou refuser le devis]
     Q -.->|interrupt : attente sans calcul| Q
     Q --> P{Devis accepté ?}
@@ -343,7 +351,7 @@ flowchart TD
     P -->|Oui| A[Agent 4 : rendez-vous — proposer]
     A --> D{Créneaux disponibles ?}
     D -->|Non : no_slots| Z
-    D -->|Oui| B[Contrôle humain : choix et confirmation]
+    D -->|Oui| B[Choix du créneau, coordonnées et confirmation]
     B -.->|interrupt : attente sans réservation| B
     B --> C{Confirmation explicite ?}
     C -->|Non : booking_declined| Z
@@ -352,7 +360,7 @@ flowchart TD
     T -.->|Conflit : rester en attente de choix| B
 ```
 
-Les quatre agents correspondent à quatre nœuds métier. Les validations sont des nœuds techniques ; l’outil de réservation n’est pas un nouvel agent. Le schéma sépare cet outil pour montrer le moment exact de l’écriture. L’implémentation peut l’appeler dans le contrôle de confirmation, après interrupt().
+Les quatre agents correspondent à quatre rôles métier. L’agent de recherche intervient dans deux nœuds : collecte des causes/questions, puis analyse des réponses. Le questionnaire et les validations sont des nœuds techniques ; l’outil de réservation n’est pas un nouvel agent. Ce dernier est appelé après la confirmation humaine.
 
 Pour limiter la complexité, un conflit de disponibilité est normalement détecté par l’API AVANT la reprise du graphe : réponse 409, options actualisées et graphe toujours suspendu. La transaction d’écriture vérifie une seconde fois pour traiter une éventuelle concurrence.
 
@@ -429,16 +437,24 @@ sequenceDiagram
     G->>R: Code connu, véhicule et interprétation
     R->>M: agent.started
     R->>DB: Lire causes, contrôles et signaux véhicule applicables
-    DB-->>R: Fiches et provenance
-    R->>LLM: Synthétiser seulement les informations fournies
+    DB-->>R: Fiches, provenance et questionnaire
+    R-->>G: Causes possibles et questions
+    G->>G: interrupt pour recueillir les observations
+    UI-->>U: Trois questions adaptées au code
+    U->>UI: Répondre ou choisir Je ne sais pas
+    UI->>API: POST /api/diagnostics/{id}/symptoms
+    API-->>UI: 202, réponses reçues
+    API->>G: Command resume avec les réponses
+    G->>R: Classer les causes selon les observations
+    R->>LLM: Expliquer les indices et l’incertitude du classement
     LLM-->>R: Synthèse et usage tokens
     R->>M: agent.completed
     R-->>G: Mettre à jour causes et références
-    G->>E: Causes et catalogue tarifaire
+    G->>E: Classement des hypothèses et catalogue tarifaire
     E->>M: agent.started
     E->>DB: Lire prix et durées de l’hypothèse principale
-    DB-->>E: Pièces 180 DH, 1,5 h, tarif 200 DH/h
-    E->>E: Calculer 180 + 1,5 × 200 = 480 DH
+    DB-->>E: Tarifs des hypothèses, durées et taux horaire
+    E->>E: Calculer le budget retenu ou la fourchette des scénarios
     E->>M: agent.completed, zéro token LLM
     E-->>G: Mettre à jour estimate
     G->>G: interrupt au contrôle du devis
@@ -487,6 +503,7 @@ sequenceDiagram
     API-->>UI: Créneaux, devis accepté et pause humaine
     UI-->>U: Afficher les créneaux et le récapitulatif
     U->>UI: Sélectionner un créneau
+    U->>UI: Renseigner prénom, nom, téléphone et email
     U->>UI: Cocher la confirmation
     Note over UI,DB: Ces deux actions locales ne réservent rien
     U->>UI: Cliquer Confirmer le rendez-vous
@@ -687,9 +704,10 @@ Le réglage Render visé est « After CI Checks Pass ». Le job obligatoire de t
 | POST /api/diagnostics | code, véhicule facultatif, année ; scénario de démo facultatif borné | 202 : id, status=queued, URL de suivi. 422 si saisie invalide. |
 | GET /api/diagnostics | Filtres facultatifs | Liste de l’historique courant. |
 | GET /api/diagnostics/{id} | after_event facultatif | State affichable, action humaine attendue et nouveaux événements. |
+| POST /api/diagnostics/{id}/symptoms | answers : réponses aux trois questions | 202 et reprise du même thread pour analyse. |
 | POST /api/diagnostics/{id}/quote-decision | accepted: true/false | 202 si reprise, 409 si action incompatible ; même dossier, pas de nouvel identifiant. |
 | GET /api/diagnostics/{id}/slots | Aucune | Options encore éligibles et libres pour ce dossier, horaires Casablanca. |
-| POST /api/diagnostics/{id}/booking-decision | confirmed: true/false ; slot_id si true | 202 si reprise ; 409 si créneau occupé ou état incompatible ; 422 si données incomplètes. |
+| POST /api/diagnostics/{id}/booking-decision | confirmed: true/false ; slot et customer si true | 202 si reprise ; 409 si créneau occupé ou état incompatible ; 422 si données incomplètes. |
 | GET /api/diagnostics/{id}/events | after_event, agent facultatifs | Événements de monitoring ordonnés et paginés. |
 | GET /api/diagnostics/{id}/export | Aucune | Rapport, décisions, métriques et traces JSON. |
 | GET /api/monitoring/summary | Période, agent, statut, origine | KPI et séries calculés sur les mêmes filtres. |

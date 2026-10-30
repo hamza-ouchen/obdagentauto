@@ -1,24 +1,20 @@
 {
   "status": "PASS",
-  "runId": "a86f72b6aecc49958568f46f4f15030c",
+  "runId": "db6da7cabad74ffbb71def443e9a9ab3",
+  "coilId": "4172ec828edf4ebd93613bdbd71e5685",
+  "uncertainId": "78a0f1c6ad2d4803bc0b137d667e3bf9",
   "providers": {
     "interpretation": "openrouter",
     "recherche": "openrouter"
   },
-  "degraded": false,
-  "jsErrors": [],
-  "checks": [
-    "two approvals",
-    "booking",
-    "ICS download",
-    "history",
-    "refresh",
-    "monitoring",
-    "presentation isolation",
-    "incident",
-    "refusal",
-    "unknown code",
-    "five cards",
-    "six mobile views"
-  ]
+  "selected_plugs": 480,
+  "selected_coil": 950,
+  "uncertain_range": [
+    480,
+    1250
+  ],
+  "customer_required": true,
+  "customer_retained_after_reload": true,
+  "mobile_no_overflow": true,
+  "jsErrors": []
 }

@@ -1,35 +1,44 @@
 {
-  "id": "a86f72b6aecc49958568f46f4f15030c",
-  "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+  "id": "db6da7cabad74ffbb71def443e9a9ab3",
+  "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
   "code": "P0301",
-  "vehicle_id": "toyota-corolla-hybrid",
-  "vehicle": "Toyota Corolla Hybrid 2020",
-  "year": 2020,
+  "vehicle_id": null,
+  "vehicle": "Véhicule non précisé",
+  "year": null,
   "scenario": null,
+  "workflow_version": "2.1.0",
   "status": "booked",
-  "created_at": "2026-10-30T10:59:38.178991+00:00",
-  "updated_at": "2026-10-30T11:00:08.889287+00:00",
+  "created_at": "2026-10-30T12:06:10.074355+00:00",
+  "updated_at": "2026-10-30T12:06:30.314508+00:00",
   "providers": {
     "interpretation": "openrouter",
     "recherche": "openrouter"
   },
   "degraded": false,
   "appointment": {
-    "id": "FBF3DB004A1F",
-    "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
-    "slot": "2026-11-02T14:00:00+00:00",
+    "id": "698C8955D395",
+    "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+    "slot": "2026-11-02T09:00:00+00:00",
     "workshop": "AutoDiag Atelier · Casablanca",
     "code": "P0301",
-    "vehicle": "Toyota Corolla Hybrid 2020",
+    "vehicle": "Véhicule non précisé",
     "total": 480,
+    "min_total": 480,
+    "max_total": 480,
+    "customer": {
+      "first_name": "Client",
+      "last_name": "Démo",
+      "phone": "0600000000",
+      "email": "demo@example.test"
+    },
     "confirmed": true
   },
-  "processing_ms": 27205,
+  "processing_ms": 12685,
   "current_agent": null,
   "known_code": true,
   "title": "Ratés d’allumage · cylindre 1",
   "system": "Allumage",
-  "interpretation": "Le code P0301 indique que le cylindre n° 1 ne brûle pas correctement le mélange air-carburant. Cela peut entraîner des vibrations, une perte de puissance et une consommation de carburant accrue. Il est important d'examiner les composants liés à ce cylindre pour identifier la cause du problème.",
+  "interpretation": "Le code P0301 indique que le cylindre n° 1 ne fonctionne pas correctement, ce qui peut entraîner des vibrations, une perte de puissance et une consommation accrue de carburant. Les symptômes observés peuvent orienter vers des problèmes d'allumage, d'injection ou de compression dans ce cylindre. Il est important d'examiner ces éléments pour un diagnostic précis.",
   "causes": [
     {
       "name": "Bougie d’allumage usée",
@@ -53,213 +62,177 @@
       "source": "Fiche pédagogique SQLite · P0301"
     }
   ],
-  "research_summary": "Le code P0301 indique un problème de raté d'allumage dans le cylindre 1. Les causes possibles incluent une bougie d’allumage usée, une bobine d’allumage défectueuse ou un injecteur encrassé. Il est important de contrôler l'état de la bougie, de permuter la bobine et de vérifier le débit de l'injecteur.",
-  "vehicle_signals": [
+  "research_summary": "Les vibrations ou ratés au démarrage à froid, combinées à un entretien des bougies en retard, orientent vers une bougie d’allumage usée. L'absence de lien avec le carburant ou le démarrage renforce cette hypothèse. Cependant, il est essentiel de confirmer par des contrôles en atelier, car d'autres causes comme une bobine d’allumage défectueuse ou un injecteur encrassé pourraient également être en jeu.",
+  "questions": [
     {
-      "id": "COROLLAHYBRID_ODO",
-      "name": "Odometer",
-      "unit": "kilometers",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Trips",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
+      "id": "conditions",
+      "text": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+      "options": [
+        {
+          "value": "cold",
+          "label": "Au démarrage à froid"
+        },
+        {
+          "value": "acceleration",
+          "label": "Quand j’accélère ou que le moteur force"
+        },
+        {
+          "value": "all",
+          "label": "À froid comme à chaud, de manière continue"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
     },
     {
-      "id": "COROLLAHYBRID_BAT_T_01",
-      "name": "Battery temperature 01",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
+      "id": "maintenance",
+      "text": "Que savez-vous du dernier remplacement des bougies ?",
+      "options": [
+        {
+          "value": "overdue",
+          "label": "Il remonte à longtemps / l’entretien est en retard"
+        },
+        {
+          "value": "recent",
+          "label": "Les bougies ont été remplacées récemment"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
     },
     {
-      "id": "COROLLAHYBRID_BAT_T_02",
-      "name": "Battery temperature 02",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_03",
-      "name": "Battery temperature 03",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_04",
-      "name": "Battery temperature 04",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_05",
-      "name": "Battery temperature 05",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_06",
-      "name": "Battery temperature 06",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_07",
-      "name": "Battery temperature 07",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_08",
-      "name": "Battery temperature 08",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_09",
-      "name": "Battery temperature 09",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_10",
-      "name": "Battery temperature 10",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
-    },
-    {
-      "id": "COROLLAHYBRID_BAT_T_11",
-      "name": "Battery temperature 11",
-      "unit": "celsius",
-      "filter": {
-        "from": 2019
-      },
-      "path": "Battery",
-      "source": {
-        "repository": "https://github.com/OBDb/Toyota-Corolla-Hybrid",
-        "commit": "9433c4170b191904ab93b338f924043997bed3f1",
-        "path": "signalsets/v3/default.json",
-        "license": "CC-BY-SA-4.0",
-        "retrieved": "2026-10-30"
-      }
+      "id": "fuel",
+      "text": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+      "options": [
+        {
+          "value": "after_refuel",
+          "label": "Le problème est apparu juste après un plein"
+        },
+        {
+          "value": "hard_start",
+          "label": "Le démarrage est difficile, même moteur chaud"
+        },
+        {
+          "value": "none",
+          "label": "Aucun lien particulier avec un plein ou le démarrage"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
     }
   ],
+  "vehicle_signals": [],
+  "symptom_answers": {
+    "conditions": "cold",
+    "maintenance": "overdue",
+    "fuel": "none"
+  },
+  "assessment": {
+    "status": "supported",
+    "selected_index": 0,
+    "reason": "Vos réponses orientent davantage vers « Bougie d’allumage usée » : Au démarrage à froid ; Il remonte à longtemps / l’entretien est en retard ; Aucun lien particulier avec un plein ou le démarrage. Cette hypothèse reste à confirmer par des contrôles en atelier.",
+    "answers": [
+      {
+        "question": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+        "answer": "Au démarrage à froid",
+        "unknown": false
+      },
+      {
+        "question": "Que savez-vous du dernier remplacement des bougies ?",
+        "answer": "Il remonte à longtemps / l’entretien est en retard",
+        "unknown": false
+      },
+      {
+        "question": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+        "answer": "Aucun lien particulier avec un plein ou le démarrage",
+        "unknown": false
+      }
+    ],
+    "informative_answers": 3,
+    "ranked_causes": [
+      {
+        "index": 0,
+        "name": "Bougie d’allumage usée",
+        "score": 6,
+        "evidence": [
+          "Au démarrage à froid",
+          "Il remonte à longtemps / l’entretien est en retard",
+          "Aucun lien particulier avec un plein ou le démarrage"
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Bobine d’allumage défectueuse",
+        "score": 1,
+        "evidence": [
+          "Aucun lien particulier avec un plein ou le démarrage"
+        ]
+      },
+      {
+        "index": 2,
+        "name": "Injecteur encrassé",
+        "score": 1,
+        "evidence": [
+          "Au démarrage à froid"
+        ]
+      }
+    ],
+    "method": "Règles pédagogiques explicites + synthèse IA si disponible",
+    "caveat": "Les points de classement ne sont pas des probabilités. Un code et des symptômes ne confirment pas une pièce défectueuse."
+  },
   "estimate": {
+    "cause_index": 0,
+    "repair": "Bougie d’allumage usée",
     "parts": 180,
     "hours": 1.5,
     "hourly_rate": 200,
     "labor": 300,
     "total": 480,
+    "min_total": 480,
+    "max_total": 480,
+    "scenarios": [
+      {
+        "cause_index": 0,
+        "repair": "Bougie d’allumage usée",
+        "parts": 180,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 480
+      },
+      {
+        "cause_index": 1,
+        "repair": "Bobine d’allumage défectueuse",
+        "parts": 650,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 950
+      },
+      {
+        "cause_index": 2,
+        "repair": "Injecteur encrassé",
+        "parts": 950,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 1250
+      }
+    ],
+    "uncertain": false,
     "currency": "DH",
-    "repair": "Bougie d’allumage usée",
-    "note": "Prix fictifs du TP. Une seule hypothèse chiffrée, à confirmer après contrôle. Les causes ne sont pas cumulées."
+    "note": "Budget fictif pour l’hypothèse la mieux étayée par vos réponses. La panne et la réparation restent à confirmer en atelier ; les causes ne sont pas cumulées."
   },
   "price_decision": "accepted",
   "slots": [
+    "2026-11-02T09:00:00+00:00",
+    "2026-11-02T11:00:00+00:00",
     "2026-11-02T14:00:00+00:00",
     "2026-11-03T09:00:00+00:00",
     "2026-11-03T11:00:00+00:00",
@@ -292,150 +265,183 @@
   "booking_decision": "confirmed",
   "events": [
     {
-      "id": 81,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 1,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "run.started",
-      "timestamp": "2026-10-30T10:59:38.214567+00:00"
+      "timestamp": "2026-10-30T12:06:10.074355+00:00"
     },
     {
-      "id": 82,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 2,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "interpretation",
       "kind": "agent.started",
-      "timestamp": "2026-10-30T10:59:38.554267+00:00"
+      "timestamp": "2026-10-30T12:06:10.169652+00:00"
     },
     {
-      "id": 83,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 3,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "interpretation",
       "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:00.794192+00:00",
-      "duration_ms": 22245,
+      "timestamp": "2026-10-30T12:06:18.957860+00:00",
+      "duration_ms": 8801,
       "provider": "openrouter",
       "model": "openai/gpt-4o-mini",
-      "input_tokens": 133,
-      "output_tokens": 65,
+      "input_tokens": 169,
+      "output_tokens": 78,
       "cached_tokens": 0,
-      "cost_usd": 5.8949999999999996e-05,
+      "cost_usd": 7.214999999999999e-05,
       "pricing_version": "2026-10-30"
     },
     {
-      "id": 84,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 4,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "recherche",
       "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:00.824285+00:00"
+      "timestamp": "2026-10-30T12:06:18.989905+00:00"
     },
     {
-      "id": 85,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 5,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "recherche",
       "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:04.594416+00:00",
-      "duration_ms": 3779,
-      "provider": "openrouter",
-      "model": "openai/gpt-4o-mini",
-      "input_tokens": 204,
-      "output_tokens": 85,
-      "cached_tokens": 0,
-      "cost_usd": 8.16e-05,
-      "pricing_version": "2026-10-30"
-    },
-    {
-      "id": 86,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
-      "agent": "estimation",
-      "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:04.629153+00:00"
-    },
-    {
-      "id": 87,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
-      "agent": "estimation",
-      "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:04.634504+00:00",
-      "duration_ms": 14,
+      "timestamp": "2026-10-30T12:06:18.994720+00:00",
+      "duration_ms": 8,
       "input_tokens": 0,
       "output_tokens": 0,
       "cost_usd": 0
     },
     {
-      "id": 88,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 6,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "human.wait.started",
-      "timestamp": "2026-10-30T11:00:04.668837+00:00",
+      "timestamp": "2026-10-30T12:06:19.024674+00:00",
+      "wait_kind": "symptom_questions"
+    },
+    {
+      "id": 7,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "monitoring",
+      "kind": "human.wait.ended",
+      "timestamp": "2026-10-30T12:06:23.844678+00:00"
+    },
+    {
+      "id": 8,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "recherche",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:23.904465+00:00"
+    },
+    {
+      "id": 9,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "recherche",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:27.384845+00:00",
+      "duration_ms": 3484,
+      "provider": "openrouter",
+      "model": "openai/gpt-4o-mini",
+      "input_tokens": 452,
+      "output_tokens": 97,
+      "cached_tokens": 0,
+      "cost_usd": 0.000126,
+      "pricing_version": "2026-10-30"
+    },
+    {
+      "id": 10,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "estimation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:27.409505+00:00"
+    },
+    {
+      "id": 11,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "estimation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:27.409505+00:00",
+      "duration_ms": 6,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "id": 12,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
+      "agent": "monitoring",
+      "kind": "human.wait.started",
+      "timestamp": "2026-10-30T12:06:27.435235+00:00",
       "wait_kind": "quote_approval"
     },
     {
-      "id": 89,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 13,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "human.wait.ended",
-      "timestamp": "2026-10-30T11:00:07.079618+00:00"
+      "timestamp": "2026-10-30T12:06:28.408884+00:00"
     },
     {
-      "id": 90,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 14,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "quote.accepted",
-      "timestamp": "2026-10-30T11:00:07.131234+00:00"
+      "timestamp": "2026-10-30T12:06:28.426877+00:00"
     },
     {
-      "id": 91,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 15,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "rendez_vous",
       "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:07.404164+00:00"
+      "timestamp": "2026-10-30T12:06:28.444657+00:00"
     },
     {
-      "id": 92,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 16,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "rendez_vous",
       "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:07.444085+00:00",
-      "duration_ms": 42,
+      "timestamp": "2026-10-30T12:06:28.474525+00:00",
+      "duration_ms": 32,
       "input_tokens": 0,
       "output_tokens": 0,
       "cost_usd": 0
     },
     {
-      "id": 93,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 17,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "human.wait.started",
-      "timestamp": "2026-10-30T11:00:07.483766+00:00",
+      "timestamp": "2026-10-30T12:06:28.504251+00:00",
       "wait_kind": "booking_approval"
     },
     {
-      "id": 94,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 18,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "human.wait.ended",
-      "timestamp": "2026-10-30T11:00:08.572136+00:00"
+      "timestamp": "2026-10-30T12:06:30.265130+00:00"
     },
     {
-      "id": 95,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 19,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "rendez_vous",
       "kind": "booking.confirmed",
-      "timestamp": "2026-10-30T11:00:08.772250+00:00",
-      "appointment_id": "FBF3DB004A1F"
+      "timestamp": "2026-10-30T12:06:30.284653+00:00",
+      "appointment_id": "698C8955D395"
     },
     {
-      "id": 96,
-      "correlation_id": "a86f72b6aecc49958568f46f4f15030c",
+      "id": 20,
+      "correlation_id": "db6da7cabad74ffbb71def443e9a9ab3",
       "agent": "monitoring",
       "kind": "run.completed",
-      "timestamp": "2026-10-30T11:00:08.887253+00:00",
+      "timestamp": "2026-10-30T12:06:30.309361+00:00",
       "outcome": "booked"
     }
   ],
   "metrics": {
-    "input_tokens": 337,
-    "output_tokens": 150,
-    "cost_usd": 0.00014055,
+    "input_tokens": 621,
+    "output_tokens": 175,
+    "cost_usd": 0.00019815,
     "incomplete_usage": false
   },
   "incidents": []

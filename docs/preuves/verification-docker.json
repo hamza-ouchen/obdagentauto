@@ -1,12 +1,11 @@
 {
   "status": "PASS",
-  "version": "2.0.0",
-  "health_http": 200,
-  "quote_total_dh": 480,
-  "two_approvals": true,
+  "version": "2.1.0",
+  "questionnaire_before_estimate": true,
+  "answers_select_coil": true,
+  "total_dh": 950,
+  "missing_customer_http": 422,
+  "customer_stored": true,
   "booking_status": "booked",
-  "video_available": true,
-  "agent_cards": 5,
-  "provider_mode": "demo_without_key",
-  "bind": "127.0.0.1:8766"
+  "provider_mode": "demo_without_key"
 }

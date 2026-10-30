@@ -17,7 +17,7 @@ Déclencheurs : délai dépassé, erreur réseau, refus fournisseur, réponse vi
 
 Centre des agents → Simuler un incident. Un dossier P0301 est créé avec scenario=openai_unavailable. Aucun appel fournisseur n’est effectué pour ce scénario et aucune configuration globale n’est modifiée.
 
-Attendu : deux erreurs fournisseur simulées, incidents associés à RB-LLM-01, repli local, statut awaiting_quote_approval, devis 480 DH, aucune réservation.
+Attendu : une première erreur fournisseur simulée, puis le questionnaire en pause. Répondre « à froid », « bougies anciennes », « aucun lien avec un plein » pour poursuivre : seconde erreur simulée, repli local, incidents associés à RB-LLM-01, statut awaiting_quote_approval, budget 480 DH et aucune réservation. Sans réponses, aucun budget n’est calculé.
 
 Centre des agents → filtre Scénarios d’incident → sélectionner le dossier → exporter JSON. Le fichier est le compte rendu effectif, avec les étapes appliquées et le même Correlation ID.
 

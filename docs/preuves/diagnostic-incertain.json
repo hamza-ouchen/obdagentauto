@@ -1,0 +1,325 @@
+{
+  "id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+  "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+  "code": "P0301",
+  "vehicle_id": null,
+  "vehicle": "Véhicule non précisé",
+  "year": null,
+  "scenario": null,
+  "workflow_version": "2.1.0",
+  "status": "awaiting_quote_approval",
+  "created_at": "2026-10-30T12:06:39.524777+00:00",
+  "updated_at": "2026-10-30T12:06:49.569391+00:00",
+  "providers": {
+    "interpretation": "openrouter",
+    "recherche": "openrouter"
+  },
+  "degraded": false,
+  "appointment": null,
+  "processing_ms": 7515,
+  "current_agent": null,
+  "known_code": true,
+  "title": "Ratés d’allumage · cylindre 1",
+  "system": "Allumage",
+  "interpretation": "Le code P0301 indique que le cylindre n° 1 ne fonctionne pas correctement, ce qui peut entraîner des vibrations, une perte de puissance et une consommation accrue de carburant. Ces symptômes peuvent être causés par divers facteurs, tels qu'une bougie d'allumage défectueuse, un injecteur encrassé ou une compression insuffisante. Il est important d'examiner tous ces éléments pour diagnostiquer la cause exacte.",
+  "causes": [
+    {
+      "name": "Bougie d’allumage usée",
+      "detail": "Contrôler l’état et l’écartement de la bougie du cylindre 1.",
+      "likelihood": "Élevée",
+      "parts": 180,
+      "source": "Fiche pédagogique SQLite · P0301"
+    },
+    {
+      "name": "Bobine d’allumage défectueuse",
+      "detail": "Permuter la bobine avec un autre cylindre et vérifier si le défaut se déplace.",
+      "likelihood": "Moyenne",
+      "parts": 650,
+      "source": "Fiche pédagogique SQLite · P0301"
+    },
+    {
+      "name": "Injecteur encrassé",
+      "detail": "Vérifier le débit de l’injecteur et son alimentation électrique.",
+      "likelihood": "Faible",
+      "parts": 950,
+      "source": "Fiche pédagogique SQLite · P0301"
+    }
+  ],
+  "research_summary": "Le code P0301 indique un problème de raté d'allumage sur le cylindre 1. Les réponses fournies ne permettent pas de déterminer clairement la cause, car il n'y a pas d'observations sur les vibrations, l'état des bougies ou un lien avec le carburant. Ainsi, plusieurs causes potentielles, comme une bougie usée, une bobine défectueuse ou un injecteur encrassé, doivent être explorées sans privilégier une en particulier.",
+  "questions": [
+    {
+      "id": "conditions",
+      "text": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+      "options": [
+        {
+          "value": "cold",
+          "label": "Au démarrage à froid"
+        },
+        {
+          "value": "acceleration",
+          "label": "Quand j’accélère ou que le moteur force"
+        },
+        {
+          "value": "all",
+          "label": "À froid comme à chaud, de manière continue"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    },
+    {
+      "id": "maintenance",
+      "text": "Que savez-vous du dernier remplacement des bougies ?",
+      "options": [
+        {
+          "value": "overdue",
+          "label": "Il remonte à longtemps / l’entretien est en retard"
+        },
+        {
+          "value": "recent",
+          "label": "Les bougies ont été remplacées récemment"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    },
+    {
+      "id": "fuel",
+      "text": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+      "options": [
+        {
+          "value": "after_refuel",
+          "label": "Le problème est apparu juste après un plein"
+        },
+        {
+          "value": "hard_start",
+          "label": "Le démarrage est difficile, même moteur chaud"
+        },
+        {
+          "value": "none",
+          "label": "Aucun lien particulier avec un plein ou le démarrage"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    }
+  ],
+  "vehicle_signals": [],
+  "symptom_answers": {
+    "conditions": "unknown",
+    "maintenance": "unknown",
+    "fuel": "unknown"
+  },
+  "assessment": {
+    "status": "uncertain",
+    "selected_index": null,
+    "reason": "Les réponses ne permettent pas de départager suffisamment les causes. Aucun problème unique n’est choisi ; plusieurs scénarios de coût sont présentés.",
+    "answers": [
+      {
+        "question": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+        "answer": "Je ne sais pas / je ne l’ai pas observé",
+        "unknown": true
+      },
+      {
+        "question": "Que savez-vous du dernier remplacement des bougies ?",
+        "answer": "Je ne sais pas / je ne l’ai pas observé",
+        "unknown": true
+      },
+      {
+        "question": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+        "answer": "Je ne sais pas / je ne l’ai pas observé",
+        "unknown": true
+      }
+    ],
+    "informative_answers": 0,
+    "ranked_causes": [
+      {
+        "index": 0,
+        "name": "Bougie d’allumage usée",
+        "score": 0,
+        "evidence": []
+      },
+      {
+        "index": 1,
+        "name": "Bobine d’allumage défectueuse",
+        "score": 0,
+        "evidence": []
+      },
+      {
+        "index": 2,
+        "name": "Injecteur encrassé",
+        "score": 0,
+        "evidence": []
+      }
+    ],
+    "method": "Règles pédagogiques explicites + synthèse IA si disponible",
+    "caveat": "Les points de classement ne sont pas des probabilités. Un code et des symptômes ne confirment pas une pièce défectueuse."
+  },
+  "estimate": {
+    "parts": null,
+    "hours": 1.5,
+    "hourly_rate": 200,
+    "labor": 300,
+    "total": null,
+    "min_total": 480,
+    "max_total": 1250,
+    "scenarios": [
+      {
+        "cause_index": 0,
+        "repair": "Bougie d’allumage usée",
+        "parts": 180,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 480
+      },
+      {
+        "cause_index": 1,
+        "repair": "Bobine d’allumage défectueuse",
+        "parts": 650,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 950
+      },
+      {
+        "cause_index": 2,
+        "repair": "Injecteur encrassé",
+        "parts": 950,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 1250
+      }
+    ],
+    "uncertain": true,
+    "currency": "DH",
+    "repair": "Plusieurs hypothèses restent possibles",
+    "note": "Informations insuffisantes pour choisir une réparation unique. Fourchette fictive selon les scénarios, sans cumul des causes. Contrôle atelier nécessaire."
+  },
+  "events": [
+    {
+      "id": 33,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "monitoring",
+      "kind": "run.started",
+      "timestamp": "2026-10-30T12:06:39.534524+00:00"
+    },
+    {
+      "id": 34,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "interpretation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:39.646683+00:00"
+    },
+    {
+      "id": 35,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "interpretation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:42.849487+00:00",
+      "duration_ms": 3219,
+      "provider": "openrouter",
+      "model": "openai/gpt-4o-mini",
+      "input_tokens": 169,
+      "output_tokens": 93,
+      "cached_tokens": 0,
+      "cost_usd": 8.115e-05,
+      "pricing_version": "2026-10-30"
+    },
+    {
+      "id": 36,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "recherche",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:42.864857+00:00"
+    },
+    {
+      "id": 37,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "recherche",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:42.869427+00:00",
+      "duration_ms": 9,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "id": 38,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "monitoring",
+      "kind": "human.wait.started",
+      "timestamp": "2026-10-30T12:06:42.918249+00:00",
+      "wait_kind": "symptom_questions"
+    },
+    {
+      "id": 39,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "monitoring",
+      "kind": "human.wait.ended",
+      "timestamp": "2026-10-30T12:06:45.439791+00:00"
+    },
+    {
+      "id": 40,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "recherche",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:45.489503+00:00"
+    },
+    {
+      "id": 41,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "recherche",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:49.509010+00:00",
+      "duration_ms": 4022,
+      "provider": "openrouter",
+      "model": "openai/gpt-4o-mini",
+      "input_tokens": 430,
+      "output_tokens": 102,
+      "cached_tokens": 0,
+      "cost_usd": 0.0001257,
+      "pricing_version": "2026-10-30"
+    },
+    {
+      "id": 42,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "estimation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:06:49.518855+00:00"
+    },
+    {
+      "id": 43,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "estimation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:06:49.524525+00:00",
+      "duration_ms": 6,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "id": 44,
+      "correlation_id": "78a0f1c6ad2d4803bc0b137d667e3bf9",
+      "agent": "monitoring",
+      "kind": "human.wait.started",
+      "timestamp": "2026-10-30T12:06:49.566163+00:00",
+      "wait_kind": "quote_approval"
+    }
+  ],
+  "metrics": {
+    "input_tokens": 599,
+    "output_tokens": 195,
+    "cost_usd": 0.00020684999999999999,
+    "incomplete_usage": false
+  },
+  "incidents": []
+}

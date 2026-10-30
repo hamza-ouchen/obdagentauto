@@ -5,9 +5,9 @@ Une démonstration locale est enregistrée dans `docs/DEMONSTRATION.webm`, avec 
 La démonstration locale ne prétend pas montrer un déploiement Render ou une exécution GitHub Actions non encore vérifiés.
 
 1. Ouvrir le site Render et présenter le tableau de bord futuriste. Montrer la mention télémétrie simulée.
-2. Ouvrir Diagnostic IA, code P0301, Toyota Corolla Hybrid, 2020. Lancer et observer les trois premiers agents.
+2. Ouvrir Diagnostic IA, code P0301, Toyota Corolla Hybrid, 2020. Répondre au questionnaire : à froid, bougies anciennes, aucun lien avec un plein. Observer l’analyse des réponses puis l’estimation.
 3. Montrer le devis 480 DH et la pause LangGraph. Aucun rendez-vous n’est encore enregistré.
-4. Accepter le devis, choisir un créneau, cocher la confirmation puis réserver. Ouvrir le planning et télécharger le calendrier.
+4. Accepter le devis, choisir un créneau, saisir les quatre coordonnées fictives, cocher la confirmation puis réserver. Ouvrir le planning et télécharger le calendrier.
 5. Ouvrir Centre des agents. Sélectionner ce dossier et montrer Correlation ID, durées, tokens, coût estimé et traces.
 6. Lancer P0420 et refuser le devis. Montrer que l’agent rendez-vous n’est pas exécuté.
 7. Lancer P0999 et montrer la branche code non couvert.

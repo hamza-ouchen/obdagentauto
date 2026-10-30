@@ -131,7 +131,7 @@ class Store:
                         result.append(slot)
         return result
 
-    def book(self, run_id, slot):
+    def book(self, run_id, slot, customer=None):
         with self.lock,self.db:
             existing=self.db.execute("SELECT payload FROM appointments WHERE run_id=?",(run_id,)).fetchone()
             if existing:
@@ -141,8 +141,10 @@ class Store:
                 return appointment
             if slot not in self.slots():
                 raise ValueError("Ce créneau n’est plus disponible.")
+            if not customer:
+                raise ValueError("Les coordonnées du client sont obligatoires.")
             run=self.get(run_id)
-            data={"id":uuid4().hex[:12].upper(),"correlation_id":run_id,"slot":slot,"workshop":"AutoDiag Atelier · Casablanca","code":run["code"],"vehicle":run["vehicle"],"total":run["estimate"]["total"],"confirmed":True}
+            data={"id":uuid4().hex[:12].upper(),"correlation_id":run_id,"slot":slot,"workshop":"AutoDiag Atelier · Casablanca","code":run["code"],"vehicle":run["vehicle"],"total":run["estimate"]["total"],"min_total":run["estimate"].get('min_total',run["estimate"]['total']),"max_total":run["estimate"].get('max_total',run["estimate"]['total']),"customer":customer,"confirmed":True}
             self.db.execute("INSERT INTO appointments VALUES (?,?,?,?)",(data["id"],run_id,slot,json.dumps(data,ensure_ascii=False)))
             return data
 

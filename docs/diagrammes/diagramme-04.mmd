@@ -30,16 +30,24 @@ sequenceDiagram
     G->>R: Code connu, véhicule et interprétation
     R->>M: agent.started
     R->>DB: Lire causes, contrôles et signaux véhicule applicables
-    DB-->>R: Fiches et provenance
-    R->>LLM: Synthétiser seulement les informations fournies
+    DB-->>R: Fiches, provenance et questionnaire
+    R-->>G: Causes possibles et questions
+    G->>G: interrupt pour recueillir les observations
+    UI-->>U: Trois questions adaptées au code
+    U->>UI: Répondre ou choisir Je ne sais pas
+    UI->>API: POST /api/diagnostics/{id}/symptoms
+    API-->>UI: 202, réponses reçues
+    API->>G: Command resume avec les réponses
+    G->>R: Classer les causes selon les observations
+    R->>LLM: Expliquer les indices et l’incertitude du classement
     LLM-->>R: Synthèse et usage tokens
     R->>M: agent.completed
     R-->>G: Mettre à jour causes et références
-    G->>E: Causes et catalogue tarifaire
+    G->>E: Classement des hypothèses et catalogue tarifaire
     E->>M: agent.started
     E->>DB: Lire prix et durées de l’hypothèse principale
-    DB-->>E: Pièces 180 DH, 1,5 h, tarif 200 DH/h
-    E->>E: Calculer 180 + 1,5 × 200 = 480 DH
+    DB-->>E: Tarifs des hypothèses, durées et taux horaire
+    E->>E: Calculer le budget retenu ou la fourchette des scénarios
     E->>M: agent.completed, zéro token LLM
     E-->>G: Mettre à jour estimate
     G->>G: interrupt au contrôle du devis

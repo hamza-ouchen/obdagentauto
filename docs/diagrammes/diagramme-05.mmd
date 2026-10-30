@@ -26,6 +26,7 @@ sequenceDiagram
     API-->>UI: Créneaux, devis accepté et pause humaine
     UI-->>U: Afficher les créneaux et le récapitulatif
     U->>UI: Sélectionner un créneau
+    U->>UI: Renseigner prénom, nom, téléphone et email
     U->>UI: Cocher la confirmation
     Note over UI,DB: Ces deux actions locales ne réservent rien
     U->>UI: Cliquer Confirmer le rendez-vous

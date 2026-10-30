@@ -1,13 +1,14 @@
 {
   "status": "PASS",
-  "immutable_dossier": true,
-  "empty_new_form": true,
-  "period_filters": true,
+  "priority_cause_displayed_first": true,
+  "customer_fields": 4,
+  "mobile_geometry": {
+    "width": 390,
+    "scroll": 390
+  },
   "video": {
-    "duration_seconds": 57.56,
+    "duration": 69.92,
     "width": 1512,
     "height": 980
-  },
-  "javascript_errors": [],
-  "source": "Chrome verification executed on 2026-10-30"
+  }
 }

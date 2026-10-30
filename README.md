@@ -28,9 +28,9 @@ Configuration : `LLM_PROVIDER=openrouter`, `LLM_MODEL=openai/gpt-4o-mini`. Le mo
 ## Parcours à essayer
 
 1. Diagnostic IA → P0301 → Toyota Corolla Hybrid → 2020 → Lancer le diagnostic.
-2. Observer interprétation, recherche et estimation : **180 DH + 1,5 h × 200 DH = 480 DH**.
-3. LangGraph est suspendu. Accepter le devis pour obtenir les créneaux.
-4. Choisir un créneau, cocher la confirmation puis confirmer. Ce sont deux validations distinctes.
+2. Répondre au questionnaire sur les symptômes. Par exemple : à froid, bougies anciennes, aucun lien avec un plein. L’hypothèse bougie donne alors **180 DH + 1,5 h × 200 DH = 480 DH**.
+3. Si les réponses ne départagent pas les causes, aucune réparation unique n’est choisie : plusieurs scénarios et une fourchette sont présentés. LangGraph attend l’accord sur le budget.
+4. Après acceptation, choisir un créneau et renseigner **prénom, nom, téléphone et email**, puis cocher et confirmer la réservation.
 5. Ouvrir Rendez-vous et télécharger le calendrier `.ics`.
 6. Dans Centre des agents, sélectionner le dossier : durées, tokens, coût estimé, événements et Correlation ID.
 7. Refuser un devis pour montrer la branche sans agent rendez-vous.
@@ -46,9 +46,15 @@ Navigateur : 6 vues HTML/CSS/JS + Chart.js local
               │ HTTP, même domaine
           FastAPI / LangGraph
               │
- START → interprétation → code connu ? → recherche → estimation
+ START → interprétation → code connu ? → recherche des causes
                 │ non                              │
-                END                        validation du devis
+                END                        questionnaire client
+                                                   │ réponses
+                                      analyse des hypothèses
+                                                   │
+                                      estimation / fourchette
+                                                   │
+                                           validation du devis
                                             │ refus : END
                                             │ accord
                                       agent rendez-vous
@@ -61,13 +67,14 @@ Navigateur : 6 vues HTML/CSS/JS + Chart.js local
 ```
 
 - **Interprétation et recherche** : deux appels linguistiques au modèle OpenAI via OpenRouter, fondés sur les fiches ; repli local en cas d’échec.
-- **Estimation** : calcul Python déterministe, aucun prix généré par le modèle.
+- **Questionnaire** : pause LangGraph avant l’estimation ; les réponses orientent un classement pédagogique et sont transmises à l’agent de recherche pour son explication. Aucun choix automatique de la première cause.
+- **Estimation** : calcul Python déterministe pour l’hypothèse étayée, ou fourchette et scénarios si les informations sont insuffisantes. Aucun prix généré par le modèle.
 - **Rendez-vous** : disponibilités et écriture SQLite après confirmation humaine. Unicité du créneau et réservation idempotente par dossier.
 - **Monitoring** : événements JSON, règles d’incident, mesures et agrégats. Aucun appel LLM supplémentaire.
-- **Deux `interrupt()`**, checkpoints SQLite et reprise du même thread. Aucun rappel des modèles pendant une reprise humaine.
+- **Trois `interrupt()`** : questionnaire, accord du budget et confirmation du rendez-vous. Le même thread est repris. L’analyse des réponses appelle le modèle de recherche ; les deux confirmations finales ne rappellent pas les modèles.
 - **Tâche locale FastAPI** pour l’analyse initiale ; l’interface lit l’avancement par requêtes courtes. Les reprises sans LLM sont rapides et synchrones.
 
-Documentation interactive de l’API : **/docs**. Architecture détaillée : [dossier de conception](docs/ARCHITECTURE_ET_PARCOURS.md), [version visuelle](docs/ARCHITECTURE_ET_PARCOURS.html). Les ajustements d’implémentation par rapport au dossier initial sont précisés dans celui-ci.
+Documentation interactive de l’API : **/docs**. Architecture détaillée : [dossier de conception](docs/ARCHITECTURE_ET_PARCOURS.md), [version visuelle](docs/ARCHITECTURE_ET_PARCOURS.html). Le parcours actualisé est décrit dans [l’évolution 2.1](docs/EVOLUTION_2_1.md).
 
 ## Interface et données
 
@@ -77,7 +84,7 @@ Le thème sombre comprend illustration holographique, cartes par agent, graphe a
 
 Les jauges automobiles affichent des **valeurs simulées**, jamais des mesures d’une voiture. Les fichiers OBDb définissent les signaux ; ils ne fournissent ni télémétrie réelle ni tarifs de réparation. Les JSON de deux véhicules sont inclus à des commits précis avec crédits et provenance.
 
-Les fiches, causes, prix et atelier sont fictifs. Le véhicule n’adapte pas le prix à une référence constructeur. Aucune connexion matérielle, aucun paiement et aucun message à un atelier réel.
+Les fiches, règles de classement, prix et atelier sont pédagogiques. Le véhicule n’adapte pas le prix à une référence constructeur. Les coordonnées sont enregistrées avec la réservation, sans être envoyées au modèle ou aux logs de monitoring. Aucune connexion matérielle, aucun paiement et aucun message à un atelier réel.
 
 ## Vérification
 
@@ -86,7 +93,7 @@ Les fiches, causes, prix et atelier sont fictifs. Le véhicule n’adapte pas le
 .\.venv\Scripts\python.exe -m pip check
 ```
 
-Les tests utilisent une base temporaire et des appels fournisseur simulés : aucun coût API pendant la suite automatique. Ils couvrent les branches, les deux pauses, les refus, les conflits simultanés, l’idempotence, la reprise SQLite, les coûts, le monitoring et les sources OBDb.
+Les tests utilisent une base temporaire et des appels fournisseur simulés : aucun coût API pendant la suite automatique. Ils couvrent les branches, les trois pauses, l’influence des réponses sur la cause et le prix, l’incertitude, les coordonnées obligatoires, les refus, les conflits simultanés, l’idempotence, la reprise SQLite, les coûts, le monitoring et les sources OBDb.
 
 Un test réel du modèle et des vérifications Chrome sont consignés séparément dans [le rapport de livraison](docs/VALIDATION.md). Les résultats locaux ne constituent pas une exécution GitHub Actions ou un déploiement cloud.
 

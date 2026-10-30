@@ -1,4 +1,4 @@
-"""Quatre agents métier, deux pauses humaines et monitoring transversal."""
+"""Quatre agents métier, questionnaire, deux validations et monitoring transversal."""
 import json
 import logging
 import sqlite3
@@ -9,10 +9,11 @@ from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from app import llm
+from app.symptoms import assess, public_questions
 
 LOGGER=logging.getLogger('autodiag')
 AGENTS=('interpretation','recherche','estimation','rendez_vous')
-WAITING={'quote_approval':'awaiting_quote_approval','booking_approval':'awaiting_booking_approval'}
+WAITING={'symptom_questions':'awaiting_symptom_answers','quote_approval':'awaiting_quote_approval','booking_approval':'awaiting_booking_approval'}
 
 
 class DiagnosticState(TypedDict,total=False):
@@ -28,6 +29,9 @@ class DiagnosticState(TypedDict,total=False):
     system:str
     causes:list[dict]
     research_summary:str
+    questions:list[dict]
+    symptom_answers:dict[str,str]
+    assessment:dict
     vehicle_signals:list[dict]
     estimate:dict
     price_decision:str
@@ -51,10 +55,14 @@ class Engine:
         for name in AGENTS:
             builder.add_node(name,self.observed(name,getattr(self,name)))
         builder.add_node('quote_approval',self.quote_approval)
+        builder.add_node('symptom_questions',self.symptom_questions)
+        builder.add_node('analyse_symptomes',self.observed('recherche',self.analyse_symptomes))
         builder.add_node('booking_approval',self.booking_approval)
         builder.add_edge(START,'interpretation')
         builder.add_conditional_edges('interpretation',lambda s:'recherche' if s['known_code'] else END)
-        builder.add_edge('recherche','estimation')
+        builder.add_edge('recherche','symptom_questions')
+        builder.add_edge('symptom_questions','analyse_symptomes')
+        builder.add_edge('analyse_symptomes','estimation')
         builder.add_edge('estimation','quote_approval')
         builder.add_conditional_edges('quote_approval',lambda s:'rendez_vous' if s['price_decision']=='accepted' else END)
         builder.add_conditional_edges('rendez_vous',lambda s:'booking_approval' if s['slots'] else END)
@@ -112,14 +120,31 @@ class Engine:
 
     def recherche(self,state):
         causes=self.store.code(state['code'])['causes']
-        text,meta,usage=self.language(state,'recherche',{'code':state['code'],'causes':[{'name':c['name'],'control':c['detail']} for c in causes]},'Contrôler d’abord la première hypothèse, puis les causes alternatives. Ces pistes nécessitent une vérification en atelier.')
         vehicles=self.store.vehicles(state.get('year'),state.get('vehicle_id')) if state.get('vehicle_id') else []
-        return {'causes':[{**c,'source':f"Fiche pédagogique SQLite · {state['code']}"} for c in causes],'research_summary':text,'vehicle_signals':vehicles[0]['signals'][:12] if vehicles else [],**meta,'_usage':usage}
+        return {'causes':[{**c,'source':f"Fiche pédagogique SQLite · {state['code']}"} for c in causes],'research_summary':'Plusieurs causes peuvent expliquer ce code. Vos observations sont nécessaires avant de privilégier une hypothèse.','questions':public_questions(state['code']),'vehicle_signals':vehicles[0]['signals'][:12] if vehicles else []}
+
+    def symptom_questions(self,state):
+        decision=interrupt({'kind':'symptom_questions','questions':state['questions']})
+        return {'symptom_answers':decision['answers']}
+
+    def analyse_symptomes(self,state):
+        assessment=assess(state['code'],state['symptom_answers'],state['causes'])
+        text,meta,usage=self.language(state,'recherche',{
+            'code':state['code'],'answers':assessment['answers'],
+            'causes':[{'name':c['name'],'control':c['detail']} for c in state['causes']],
+            'assessment':assessment['reason'],'constraint':'Explique le classement à partir des réponses. Si le classement est incertain, ne choisis aucune cause unique. Ne présente jamais une hypothèse comme une panne confirmée.'
+        },assessment['reason'])
+        return {'assessment':assessment,'research_summary':text,**meta,'_usage':usage}
 
     def estimation(self,state):
         entry=self.store.code(state['code'])
-        parts,hours,rate=entry['causes'][0]['parts'],entry['hours'],200
-        return {'estimate':{'parts':parts,'hours':hours,'hourly_rate':rate,'labor':round(hours*rate),'total':parts+round(hours*rate),'currency':'DH','repair':state['causes'][0]['name'],'note':'Prix fictifs du TP. Une seule hypothèse chiffrée, à confirmer après contrôle. Les causes ne sont pas cumulées.'}}
+        hours,rate=entry['hours'],200
+        scenarios=[{'cause_index':i,'repair':cause['name'],'parts':cause['parts'],'hours':hours,'hourly_rate':rate,'labor':round(hours*rate),'total':cause['parts']+round(hours*rate)} for i,cause in enumerate(state['causes'])]
+        selected=state['assessment']['selected_index']
+        if selected is None:
+            return {'estimate':{'parts':None,'hours':hours,'hourly_rate':rate,'labor':round(hours*rate),'total':None,'min_total':min(s['total'] for s in scenarios),'max_total':max(s['total'] for s in scenarios),'scenarios':scenarios,'uncertain':True,'currency':'DH','repair':'Plusieurs hypothèses restent possibles','note':'Informations insuffisantes pour choisir une réparation unique. Fourchette fictive selon les scénarios, sans cumul des causes. Contrôle atelier nécessaire.'}}
+        scenario=scenarios[selected]
+        return {'estimate':{**scenario,'min_total':scenario['total'],'max_total':scenario['total'],'scenarios':scenarios,'uncertain':False,'currency':'DH','note':'Budget fictif pour l’hypothèse la mieux étayée par vos réponses. La panne et la réparation restent à confirmer en atelier ; les causes ne sont pas cumulées.'}}
 
     def quote_approval(self,state):
         decision=interrupt({'kind':'quote_approval','estimate':state['estimate']})
@@ -136,7 +161,7 @@ class Engine:
         if decision.get('confirmed') is not True:
             self.emit(state['id'],'monitoring','booking.declined')
             return {'booking_decision':'declined','status':'booking_declined','appointment':None}
-        appointment=self.store.book(state['id'],decision['slot'])
+        appointment=self.store.book(state['id'],decision['slot'],decision['customer'])
         self.emit(state['id'],'rendez_vous','booking.confirmed',appointment_id=appointment['id'])
         return {'appointment':appointment,'booking_decision':'confirmed','status':'booked'}
 

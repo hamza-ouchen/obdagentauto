@@ -1,21 +1,22 @@
 {
-  "id": "163da8d7c9244b88a0af1e7f9e60ef25",
-  "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+  "id": "b6c1c42275dd4582b47d7c800eaae747",
+  "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
   "code": "P0301",
   "vehicle_id": null,
   "vehicle": "Véhicule non précisé",
   "year": null,
   "scenario": "openai_unavailable",
+  "workflow_version": "2.1.0",
   "status": "price_declined",
-  "created_at": "2026-10-30T11:00:14.579547+00:00",
-  "updated_at": "2026-10-30T11:00:20.564584+00:00",
+  "created_at": "2026-10-30T12:21:42.324746+00:00",
+  "updated_at": "2026-10-30T12:21:49.487235+00:00",
   "providers": {
     "interpretation": "fallback",
     "recherche": "fallback"
   },
   "degraded": true,
   "appointment": null,
-  "processing_ms": 428,
+  "processing_ms": 426,
   "current_agent": null,
   "known_code": true,
   "title": "Ratés d’allumage · cylindre 1",
@@ -44,58 +45,213 @@
       "source": "Fiche pédagogique SQLite · P0301"
     }
   ],
-  "research_summary": "Contrôler d’abord la première hypothèse, puis les causes alternatives. Ces pistes nécessitent une vérification en atelier.",
+  "research_summary": "Vos réponses orientent davantage vers « Bougie d’allumage usée » : Au démarrage à froid ; Il remonte à longtemps / l’entretien est en retard ; Aucun lien particulier avec un plein ou le démarrage. Cette hypothèse reste à confirmer par des contrôles en atelier.",
+  "questions": [
+    {
+      "id": "conditions",
+      "text": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+      "options": [
+        {
+          "value": "cold",
+          "label": "Au démarrage à froid"
+        },
+        {
+          "value": "acceleration",
+          "label": "Quand j’accélère ou que le moteur force"
+        },
+        {
+          "value": "all",
+          "label": "À froid comme à chaud, de manière continue"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    },
+    {
+      "id": "maintenance",
+      "text": "Que savez-vous du dernier remplacement des bougies ?",
+      "options": [
+        {
+          "value": "overdue",
+          "label": "Il remonte à longtemps / l’entretien est en retard"
+        },
+        {
+          "value": "recent",
+          "label": "Les bougies ont été remplacées récemment"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    },
+    {
+      "id": "fuel",
+      "text": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+      "options": [
+        {
+          "value": "after_refuel",
+          "label": "Le problème est apparu juste après un plein"
+        },
+        {
+          "value": "hard_start",
+          "label": "Le démarrage est difficile, même moteur chaud"
+        },
+        {
+          "value": "none",
+          "label": "Aucun lien particulier avec un plein ou le démarrage"
+        },
+        {
+          "value": "unknown",
+          "label": "Je ne sais pas / je ne l’ai pas observé"
+        }
+      ]
+    }
+  ],
   "vehicle_signals": [],
+  "symptom_answers": {
+    "conditions": "cold",
+    "maintenance": "overdue",
+    "fuel": "none"
+  },
+  "assessment": {
+    "status": "supported",
+    "selected_index": 0,
+    "reason": "Vos réponses orientent davantage vers « Bougie d’allumage usée » : Au démarrage à froid ; Il remonte à longtemps / l’entretien est en retard ; Aucun lien particulier avec un plein ou le démarrage. Cette hypothèse reste à confirmer par des contrôles en atelier.",
+    "answers": [
+      {
+        "question": "Quand remarquez-vous surtout les vibrations ou les ratés ?",
+        "answer": "Au démarrage à froid",
+        "unknown": false
+      },
+      {
+        "question": "Que savez-vous du dernier remplacement des bougies ?",
+        "answer": "Il remonte à longtemps / l’entretien est en retard",
+        "unknown": false
+      },
+      {
+        "question": "Avez-vous remarqué un lien avec le carburant ou le démarrage ?",
+        "answer": "Aucun lien particulier avec un plein ou le démarrage",
+        "unknown": false
+      }
+    ],
+    "informative_answers": 3,
+    "ranked_causes": [
+      {
+        "index": 0,
+        "name": "Bougie d’allumage usée",
+        "score": 6,
+        "evidence": [
+          "Au démarrage à froid",
+          "Il remonte à longtemps / l’entretien est en retard",
+          "Aucun lien particulier avec un plein ou le démarrage"
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Bobine d’allumage défectueuse",
+        "score": 1,
+        "evidence": [
+          "Aucun lien particulier avec un plein ou le démarrage"
+        ]
+      },
+      {
+        "index": 2,
+        "name": "Injecteur encrassé",
+        "score": 1,
+        "evidence": [
+          "Au démarrage à froid"
+        ]
+      }
+    ],
+    "method": "Règles pédagogiques explicites + synthèse IA si disponible",
+    "caveat": "Les points de classement ne sont pas des probabilités. Un code et des symptômes ne confirment pas une pièce défectueuse."
+  },
   "estimate": {
+    "cause_index": 0,
+    "repair": "Bougie d’allumage usée",
     "parts": 180,
     "hours": 1.5,
     "hourly_rate": 200,
     "labor": 300,
     "total": 480,
+    "min_total": 480,
+    "max_total": 480,
+    "scenarios": [
+      {
+        "cause_index": 0,
+        "repair": "Bougie d’allumage usée",
+        "parts": 180,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 480
+      },
+      {
+        "cause_index": 1,
+        "repair": "Bobine d’allumage défectueuse",
+        "parts": 650,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 950
+      },
+      {
+        "cause_index": 2,
+        "repair": "Injecteur encrassé",
+        "parts": 950,
+        "hours": 1.5,
+        "hourly_rate": 200,
+        "labor": 300,
+        "total": 1250
+      }
+    ],
+    "uncertain": false,
     "currency": "DH",
-    "repair": "Bougie d’allumage usée",
-    "note": "Prix fictifs du TP. Une seule hypothèse chiffrée, à confirmer après contrôle. Les causes ne sont pas cumulées."
+    "note": "Budget fictif pour l’hypothèse la mieux étayée par vos réponses. La panne et la réparation restent à confirmer en atelier ; les causes ne sont pas cumulées."
   },
   "price_decision": "declined",
   "events": [
     {
-      "id": 97,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 65,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "monitoring",
       "kind": "run.started",
-      "timestamp": "2026-10-30T11:00:14.594078+00:00"
+      "timestamp": "2026-10-30T12:21:42.334747+00:00"
     },
     {
-      "id": 98,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 66,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "interpretation",
       "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:14.689178+00:00"
+      "timestamp": "2026-10-30T12:21:42.360630+00:00"
     },
     {
-      "id": 99,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 67,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "interpretation",
       "kind": "provider.error",
-      "timestamp": "2026-10-30T11:00:14.709320+00:00",
+      "timestamp": "2026-10-30T12:21:42.374504+00:00",
       "error_category": "ConnectionError",
       "simulated": true
     },
     {
-      "id": 100,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 68,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "interpretation",
       "kind": "fallback.applied",
-      "timestamp": "2026-10-30T11:00:14.834245+00:00",
-      "incident_id": "d9feb6419f2d4c56bb57c3b89f1145b4"
+      "timestamp": "2026-10-30T12:21:42.384846+00:00",
+      "incident_id": "32c11b562be54a99833e22ea98e62b0c"
     },
     {
-      "id": 101,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 69,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "interpretation",
       "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:14.838775+00:00",
-      "duration_ms": 189,
+      "timestamp": "2026-10-30T12:21:42.384846+00:00",
+      "duration_ms": 37,
       "provider": "fallback",
       "input_tokens": 0,
       "output_tokens": 0,
@@ -103,88 +259,121 @@
       "model": "openai/gpt-4o-mini"
     },
     {
-      "id": 102,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 70,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "recherche",
       "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:14.863088+00:00"
+      "timestamp": "2026-10-30T12:21:42.414819+00:00"
     },
     {
-      "id": 103,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
-      "agent": "recherche",
-      "kind": "provider.error",
-      "timestamp": "2026-10-30T11:00:14.864188+00:00",
-      "error_category": "ConnectionError",
-      "simulated": true
-    },
-    {
-      "id": 104,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
-      "agent": "recherche",
-      "kind": "fallback.applied",
-      "timestamp": "2026-10-30T11:00:14.881370+00:00",
-      "incident_id": "f9f9f6d3bef24b74a0fe43faecf10b7e"
-    },
-    {
-      "id": 105,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 71,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "recherche",
       "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:14.884132+00:00",
-      "duration_ms": 24,
-      "provider": "fallback",
-      "input_tokens": 0,
-      "output_tokens": 0,
-      "cost_usd": 0,
-      "model": "openai/gpt-4o-mini"
-    },
-    {
-      "id": 106,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
-      "agent": "estimation",
-      "kind": "agent.started",
-      "timestamp": "2026-10-30T11:00:14.917384+00:00"
-    },
-    {
-      "id": 107,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
-      "agent": "estimation",
-      "kind": "agent.completed",
-      "timestamp": "2026-10-30T11:00:14.924132+00:00",
-      "duration_ms": 24,
+      "timestamp": "2026-10-30T12:21:42.414819+00:00",
+      "duration_ms": 7,
       "input_tokens": 0,
       "output_tokens": 0,
       "cost_usd": 0
     },
     {
-      "id": 108,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 72,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "monitoring",
       "kind": "human.wait.started",
-      "timestamp": "2026-10-30T11:00:14.958922+00:00",
+      "timestamp": "2026-10-30T12:21:42.444731+00:00",
+      "wait_kind": "symptom_questions"
+    },
+    {
+      "id": 73,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "monitoring",
+      "kind": "human.wait.ended",
+      "timestamp": "2026-10-30T12:21:46.059914+00:00"
+    },
+    {
+      "id": 74,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "recherche",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:21:46.120205+00:00"
+    },
+    {
+      "id": 75,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "recherche",
+      "kind": "provider.error",
+      "timestamp": "2026-10-30T12:21:46.128626+00:00",
+      "error_category": "ConnectionError",
+      "simulated": true
+    },
+    {
+      "id": 76,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "recherche",
+      "kind": "fallback.applied",
+      "timestamp": "2026-10-30T12:21:46.157978+00:00",
+      "incident_id": "76d40f4efaee4476a2653ae8dd9e5f9d"
+    },
+    {
+      "id": 77,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "recherche",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:21:46.160301+00:00",
+      "duration_ms": 46,
+      "provider": "fallback",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0,
+      "model": "openai/gpt-4o-mini"
+    },
+    {
+      "id": 78,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "estimation",
+      "kind": "agent.started",
+      "timestamp": "2026-10-30T12:21:46.225392+00:00"
+    },
+    {
+      "id": 79,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "estimation",
+      "kind": "agent.completed",
+      "timestamp": "2026-10-30T12:21:46.232678+00:00",
+      "duration_ms": 34,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0
+    },
+    {
+      "id": 80,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
+      "agent": "monitoring",
+      "kind": "human.wait.started",
+      "timestamp": "2026-10-30T12:21:46.281933+00:00",
       "wait_kind": "quote_approval"
     },
     {
-      "id": 109,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 81,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "monitoring",
       "kind": "human.wait.ended",
-      "timestamp": "2026-10-30T11:00:20.504035+00:00"
+      "timestamp": "2026-10-30T12:21:49.407157+00:00"
     },
     {
-      "id": 110,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 82,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "monitoring",
       "kind": "price.declined",
-      "timestamp": "2026-10-30T11:00:20.523804+00:00"
+      "timestamp": "2026-10-30T12:21:49.419049+00:00"
     },
     {
-      "id": 111,
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": 83,
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "monitoring",
       "kind": "run.completed",
-      "timestamp": "2026-10-30T11:00:20.558875+00:00",
+      "timestamp": "2026-10-30T12:21:49.476838+00:00",
       "outcome": "price_declined"
     }
   ],
@@ -196,14 +385,14 @@
   },
   "incidents": [
     {
-      "id": "f9f9f6d3bef24b74a0fe43faecf10b7e",
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": "76d40f4efaee4476a2653ae8dd9e5f9d",
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "recherche",
       "category": "ConnectionError",
       "simulated": true,
       "status": "mitigated",
       "runbook": "RB-LLM-01",
-      "created_at": "2026-10-30T11:00:14.868724+00:00",
+      "created_at": "2026-10-30T12:21:46.139188+00:00",
       "actions": [
         "Erreur fournisseur détectée",
         "Fiche SQLite disponible vérifiée",
@@ -212,14 +401,14 @@
       ]
     },
     {
-      "id": "d9feb6419f2d4c56bb57c3b89f1145b4",
-      "correlation_id": "163da8d7c9244b88a0af1e7f9e60ef25",
+      "id": "32c11b562be54a99833e22ea98e62b0c",
+      "correlation_id": "b6c1c42275dd4582b47d7c800eaae747",
       "agent": "interpretation",
       "category": "ConnectionError",
       "simulated": true,
       "status": "mitigated",
       "runbook": "RB-LLM-01",
-      "created_at": "2026-10-30T11:00:14.823882+00:00",
+      "created_at": "2026-10-30T12:21:42.375143+00:00",
       "actions": [
         "Erreur fournisseur détectée",
         "Fiche SQLite disponible vérifiée",

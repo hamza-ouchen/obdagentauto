@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -16,11 +17,12 @@ from pydantic import BaseModel, Field, field_validator
 from app.graph import AGENTS, Engine
 from app.llm import provider_config
 from app.storage import Store, utcnow
+from app.symptoms import validate_answers
 
 ROOT=Path(__file__).resolve().parent.parent
 load_dotenv(ROOT/'.env')
 logging.basicConfig(level=logging.INFO,format='%(message)s')
-VERSION='2.0.0'
+VERSION='2.1.0'
 TERMINAL={'booked','price_declined','booking_declined','unknown_code','no_slots','failed'}
 
 
@@ -40,9 +42,34 @@ class QuoteInput(BaseModel):
     accepted:bool
 
 
+class SymptomsInput(BaseModel):
+    answers:dict[str,str]=Field(min_length=1,max_length=10)
+
+
+class CustomerInput(BaseModel):
+    first_name:str=Field(min_length=1,max_length=80)
+    last_name:str=Field(min_length=1,max_length=80)
+    phone:str=Field(min_length=7,max_length=25)
+    email:str=Field(max_length=254,pattern=r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+
+    @field_validator('first_name','last_name','phone','email',mode='before')
+    @classmethod
+    def clean(cls,value):
+        return value.strip() if isinstance(value,str) else value
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone(cls,value):
+        digits=re.sub(r'[^0-9]','',value)
+        if not re.fullmatch(r'\+?[0-9 ()\-.]+',value) or not 7<=len(digits)<=15:
+            raise ValueError('Numéro de téléphone invalide.')
+        return value
+
+
 class BookingInput(BaseModel):
     confirmed:bool
     slot:str|None=None
+    customer:CustomerInput|None=None
 
 
 def create_app(db_path=None):
@@ -97,7 +124,7 @@ def create_app(db_path=None):
         run_id=uuid4().hex
         vehicles=app.state.store.vehicles(body.year,body.vehicle_id) if body.vehicle_id else []
         vehicle=vehicles[0]['name']+(f' {body.year}' if body.year else '') if vehicles else 'Véhicule non précisé'
-        state={'id':run_id,'correlation_id':run_id,'code':body.code,'vehicle_id':body.vehicle_id,'vehicle':vehicle,'year':body.year,'scenario':body.scenario,'status':'queued','created_at':utcnow(),'updated_at':utcnow(),'providers':{},'degraded':False,'appointment':None,'processing_ms':0}
+        state={'id':run_id,'correlation_id':run_id,'code':body.code,'vehicle_id':body.vehicle_id,'vehicle':vehicle,'year':body.year,'scenario':body.scenario,'workflow_version':VERSION,'status':'queued','created_at':utcnow(),'updated_at':utcnow(),'providers':{},'degraded':False,'appointment':None,'processing_ms':0}
         app.state.store.create(state)
         app.state.engine.claim(run_id)
         tasks.add_task(app.state.engine.execute,run_id)
@@ -105,11 +132,33 @@ def create_app(db_path=None):
 
     @app.get('/api/diagnostics')
     def history():
-        return app.state.store.runs()
+        results=[]
+        for run in app.state.store.runs():
+            if run.get('appointment'):
+                run['appointment']={k:v for k,v in run['appointment'].items() if k!='customer'}
+            results.append(run)
+        return results
 
     @app.get('/api/diagnostics/{run_id}')
     def detail(run_id:str,after_event:int=Query(default=0,ge=0)):
         return enrich(get_run(run_id),after_event)
+
+    @app.post('/api/diagnostics/{run_id}/symptoms',status_code=202)
+    def symptom_answers(run_id:str,body:SymptomsInput,tasks:BackgroundTasks):
+        engine=app.state.engine
+        with engine.guard:
+            run=get_run(run_id)
+            if run['status']!='awaiting_symptom_answers':
+                raise HTTPException(409,'Ce dossier n’attend plus de réponses au questionnaire.')
+            try:
+                validate_answers(run['code'],body.answers)
+            except ValueError as exc:
+                raise HTTPException(422,str(exc)) from exc
+            if not engine.claim(run_id):
+                raise HTTPException(409,'Une analyse de réponses est déjà en cours.')
+            app.state.store.merge(run_id,{'status':'running'})
+            tasks.add_task(engine.execute,run_id,body.model_dump())
+        return {'id':run_id,'status':'running','status_url':f'/api/diagnostics/{run_id}'}
 
     @app.post('/api/diagnostics/{run_id}/quote-decision')
     def quote_decision(run_id:str,body:QuoteInput):
@@ -118,6 +167,9 @@ def create_app(db_path=None):
             run=get_run(run_id)
             if run['status']!='awaiting_quote_approval' or not engine.claim(run_id):
                 raise HTTPException(409,'Ce devis n’attend plus de décision. Actualisez le dossier.')
+            if body.accepted and 'assessment' not in run:
+                engine.active.discard(run_id)
+                raise HTTPException(409,'Ce dossier précède le questionnaire. Relancez une nouvelle analyse pour préciser les symptômes.')
             app.state.store.merge(run_id,{'status':'running'})
             engine.execute(run_id,body.model_dump())
         return enrich(get_run(run_id))
@@ -138,6 +190,8 @@ def create_app(db_path=None):
             if run['status']!='awaiting_booking_approval':
                 raise HTTPException(409,'Ce dossier n’attend plus de réservation.')
             if body.confirmed:
+                if body.customer is None:
+                    raise HTTPException(422,'Renseignez le nom, le prénom, le téléphone et l’email du client.')
                 if not body.slot or body.slot not in run.get('slots',[]):
                     raise HTTPException(422,'Choisissez un créneau proposé.')
                 if body.slot not in app.state.store.slots():
@@ -161,7 +215,7 @@ def create_app(db_path=None):
 
     @app.get('/api/appointments')
     def appointments():
-        return app.state.store.appointments()
+        return [{**{k:v for k,v in a.items() if k!='customer'},'customer_name':' '.join(a.get('customer',{}).get(k,'') for k in ('first_name','last_name')).strip()} for a in app.state.store.appointments()]
 
     @app.get('/api/appointments/{appointment_id}/calendar')
     def calendar(appointment_id:str):
@@ -200,11 +254,11 @@ def create_app(db_path=None):
     @app.get('/api/project')
     def project():
         cards_path=ROOT/'docs/agent-cards.json'
-        return {'version':VERSION,'commit':os.getenv('RENDER_GIT_COMMIT','local'),'repository':os.getenv('GITHUB_REPOSITORY_URL',''),'cards':json.loads(cards_path.read_text(encoding='utf-8')) if cards_path.exists() else [],'video_available':(ROOT/'docs/DEMONSTRATION.webm').exists(),'documents':[{'id':'architecture','name':'Architecture et séquences'},{'id':'runbook','name':'Runbook RB-LLM-01'},{'id':'video','name':'Scénario de vidéo'},{'id':'demo','name':'Vidéo de démonstration enregistrée'},{'id':'validation','name':'Rapport des vérifications'},{'id':'readme','name':'Guide du projet'}]}
+        return {'version':VERSION,'commit':os.getenv('RENDER_GIT_COMMIT','local'),'repository':os.getenv('GITHUB_REPOSITORY_URL',''),'cards':json.loads(cards_path.read_text(encoding='utf-8')) if cards_path.exists() else [],'video_available':(ROOT/'docs/DEMONSTRATION.webm').exists(),'documents':[{'id':'architecture','name':'Architecture et séquences'},{'id':'evolution','name':'Parcours 2.1 : observations et coordonnées'},{'id':'runbook','name':'Runbook RB-LLM-01'},{'id':'video','name':'Scénario de vidéo'},{'id':'demo','name':'Vidéo de démonstration enregistrée'},{'id':'validation','name':'Rapport des vérifications'},{'id':'readme','name':'Guide du projet'}]}
 
     @app.get('/documents/{document_id}')
     def document(document_id:str):
-        paths={'architecture':ROOT/'docs/ARCHITECTURE_ET_PARCOURS.html','runbook':ROOT/'docs/RUNBOOK.md','video':ROOT/'docs/DEMO_VIDEO.md','demo':ROOT/'docs/DEMONSTRATION.webm','validation':ROOT/'docs/VALIDATION.md','readme':ROOT/'README.md'}
+        paths={'architecture':ROOT/'docs/ARCHITECTURE_ET_PARCOURS.html','evolution':ROOT/'docs/EVOLUTION_2_1.md','runbook':ROOT/'docs/RUNBOOK.md','video':ROOT/'docs/DEMO_VIDEO.md','demo':ROOT/'docs/DEMONSTRATION.webm','validation':ROOT/'docs/VALIDATION.md','readme':ROOT/'README.md'}
         target=paths.get(document_id)
         if not target or not target.exists():
             raise HTTPException(404,'Document introuvable.')
